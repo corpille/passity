@@ -1,0 +1,7 @@
+name: Passify
+version: 0.0.1
+description: >
+  A secure password keeper
+author: Corentin Pillet <corentin@liner.io>
+dependencies:
+  cipher: any
