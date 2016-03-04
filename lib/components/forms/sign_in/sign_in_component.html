@@ -1,0 +1,27 @@
+<div class="container">
+  <div class="sign-in">
+    <h1>Sign in</h1>
+    <form (ngSubmit)="onSubmit()" #signInForm="ngForm">
+      <div class="form-group">
+        <label for="login">Login</label>
+        <div [hidden]="login.valid || login.pristine" class="alert alert-danger">
+          Login is required
+        </div>
+        <input type="text" class="form-control" required
+               [(ngModel)]="user.login" placeholder="Login"
+               ngControl="login" #login="ngForm" >
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div [hidden]="password.valid || password.pristine" class="alert alert-danger">
+          Password is required
+        </div>
+        <input type="password" class="form-control" required
+               [(ngModel)]="user.password" placeholder="Password"
+               ngControl="password" #password="ngForm">
+      </div>
+      <button type="submit" class="btn btn-primary btn-block"
+              [disabled]="!signInForm.form.valid">Submit</button>
+    </form>
+  </div>
+</div>

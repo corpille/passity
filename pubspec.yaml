@@ -1,7 +1,21 @@
-name: Passify
+name: passity
 version: 0.0.1
 description: >
   A secure password keeper
 author: Corentin Pillet <corentin@liner.io>
+environment:
+  sdk: '>=1.13.0 <2.0.0'
 dependencies:
   cipher: any
+  angular2: 2.0.0-beta.8
+  browser: ^0.10.0
+  less_dart: any
+  dart_to_js_script_rewriter: ^0.1.0
+transformers:
+- less_dart
+- angular2:
+    platform_directives:
+    - 'package:angular2/common.dart#CORE_DIRECTIVES'
+    - 'package:angular2/common.dart#FORM_DIRECTIVES'
+    entry_points: web/main.dart
+- dart_to_js_script_rewriter

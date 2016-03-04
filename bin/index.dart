@@ -1,4 +1,4 @@
-import "src/passity.dart";
+import "passity.dart";
 import "package:cipher/impl/server.dart";
 import 'dart:io';
 
