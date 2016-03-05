@@ -6,3 +6,4 @@ packages
 .packages
 bin/logs/
 logs
+.atom

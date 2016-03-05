@@ -1,0 +1,6 @@
+postgres:
+  url: "localhost"
+  port: "5432"
+  dbName: "passity"
+  login: "passity"
+  password: "password"

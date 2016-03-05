@@ -6,6 +6,10 @@ author: Corentin Pillet <corentin@liner.io>
 environment:
   sdk: '>=1.13.0 <2.0.0'
 dependencies:
+  redstone: 0.6.0+1
+  redstone_mapper: 0.2.0-beta.1+1
+  redstone_mapper_pg: 0.2.0-beta.2+2
+  yaml: "^2.1.8"
   cipher: any
   angular2: 2.0.0-beta.8
   browser: ^0.10.0
