@@ -2,12 +2,19 @@ part of models;
 
 @Table("users")
 class User extends Model {
-  @Field()
+  @Field(view: "login")
   String login;
 
-  @Field()
+  @Field(view: "password")
   String password;
 
-  @Field()
+  @Field(view: "key")
   String key;
+
+  String session_token;
+
+  User escape() {
+    password = "";
+    return this;
+  }
 }

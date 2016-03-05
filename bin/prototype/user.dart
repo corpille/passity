@@ -21,6 +21,10 @@ class User {
   }
 
   String toString() {
-    return "{\n" + "\tlogin: ${login},\n" + "\tpassword: ${password},\n" + "\tkey: ${key},\n" + "}";
+    return "{\n" +
+        "\tlogin: ${login},\n" +
+        "\tpassword: ${password},\n" +
+        "\tkey: ${key},\n" +
+        "}";
   }
 }

@@ -29,10 +29,14 @@ abstract class Model {
       query += "id uuid primary key default gen_random_uuid()";
       cm.declarations.forEach((Symbol s, d) {
         if (d is VariableMirror) {
-          query += ", " +
-              MirrorSystem.getName(d.simpleName) +
-              " " +
-              matchType(d.type);
+          d.metadata.forEach((m) {
+            if (m.reflectee is Field) {
+              query += ", " +
+                  MirrorSystem.getName(d.simpleName) +
+                  " " +
+                  matchType(d.type);
+            }
+          });
         }
       });
       query += ")";

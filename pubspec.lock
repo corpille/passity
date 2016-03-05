@@ -61,6 +61,10 @@ packages:
     description: csslib
     source: hosted
     version: "0.12.2"
+  dart_jwt:
+    description: dart_jwt
+    source: hosted
+    version: "0.4.5"
   dart_style:
     description: dart_style
     source: hosted
@@ -73,6 +77,10 @@ packages:
     description: di
     source: hosted
     version: "3.3.5+1"
+  exportable:
+    description: exportable
+    source: hosted
+    version: "0.1.0"
   fixnum:
     description: fixnum
     source: hosted

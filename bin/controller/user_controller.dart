@@ -3,12 +3,46 @@ part of api;
 /// Controller that manage all the user queries
 @app.Group('/user')
 class UserController {
-  @app.Route("/", methods: const [app.POST])
+  /// Creates a new user
+  @app.Route("/", methods: const [app.PUT])
   Future addUser(@Decode() User user) async {
     //encode user, and insert it in the "user" table.
-    return postgreSql.execute(
-        "insert into users (login, password)"
-        "values (@login, @password)",
-        user);
+
+    List<User> users = await postgreSql.query(
+        "SELECT * from users WHERE login = " + user.login, User);
+    print(users);
+    if (users != null && users.length == 0) {
+      user.key = Encryption.generateKey(user.password);
+      user.password = Encryption.SHA256(user.password);
+      await postgreSql.execute(
+          "insert into users (login, password, key)"
+          "values (@login, @password, @key)",
+          user);
+      return encodeJson(user.escape());
+    }
+    return ErrorResponse.userLoginAlreadyUsed();
+  }
+
+  /// Sign the user in
+  @app.Route("/sign-in", methods: const [app.POST])
+  Future signIn(@Decode() User data) async {
+    List<User> users = await postgreSql.query(
+        "SELECT * from users WHERE login = " + data.login, User);
+    if (users != null && users.length == 1) {
+      User user = users.first;
+      if (user.password == Encryption.SHA256(data.password)) {
+        try {
+          var token = new Session(app.request).connect(user);
+          user.session_token = token;
+          var data = JSON.decode(encodeJson(user.escape()));
+          data["token"] = token;
+          return JSON.encode(data);
+        } catch (e) {
+          throw ErrorResponse.loginError();
+        }
+      }
+      throw ErrorResponse.userBadPassword();
+    }
+    throw ErrorResponse.loginNotFound();
   }
 }
