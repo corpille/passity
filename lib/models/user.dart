@@ -1,5 +1,7 @@
 part of models;
 
+enum UserType { ADMIN, EDIT, READ }
+
 @Table("users")
 class User extends Model {
   @Field(view: "login")
@@ -11,10 +13,14 @@ class User extends Model {
   @Field(view: "key")
   String key;
 
+  @Field(view: "role")
+  int role = UserType.READ.index;
+
   String session_token;
 
   User escape() {
-    password = "";
+    password = null;
+    key = null;
     return this;
   }
 }

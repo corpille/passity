@@ -13,7 +13,7 @@ handleResponseHeader() async {
   });
 }
 
-main() async {
+main(List<String> args) async {
   initCipher();
   var config = new Config();
   await config.getConfigs();
@@ -22,8 +22,13 @@ main() async {
   var postgreSql = await dbManager.getConnection();
   await TableCreator.createTables(postgreSql);
 
+  var parser = new ArgParser();
+  parser.addOption('port', abbr: 'p', defaultsTo: "8080");
+  var results = parser.parse(args);
+
   app.showErrorPage = false;
+  app.addPlugin(SecurityPlugin);
   app.addPlugin(getMapperPlugin(dbManager));
   app.setupConsoleLog();
-  app.start();
+  app.start(port: int.parse(results['port']));
 }

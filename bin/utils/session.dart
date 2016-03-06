@@ -31,16 +31,20 @@ class Session {
   /// Generate a jwt token for the current session
   ///
   String connect(User user) {
-    var claimSet = new MapJwtClaimSet({"uid": user.id});
+    var claimSet = new MapJwtClaimSet({"uid": user.id, "role": user.role});
     final jwt = new JsonWebToken.jws(claimSet, _signatureContext);
     return jwt.encode();
   }
 
-  Map get _currentSession =>
-      new JsonWebToken.decode(_req.headers[SESSION_HEADER],
-              claimSetParser: mapClaimSetParser)
-          .claimSet
-          .toMap();
+  Map get _currentSession {
+    if (_req.headers[SESSION_HEADER] == null) {
+      return null;
+    }
+    return new JsonWebToken.decode(_req.headers[SESSION_HEADER],
+            claimSetParser: mapClaimSetParser)
+        .claimSet
+        .toMap();
+  }
 
   String getUID() {
     if (_req.headers.containsKey(SESSION_HEADER)) {
@@ -49,8 +53,16 @@ class Session {
     return null;
   }
 
-  bool isRole(int role) {
-    return _currentSession["role"] == role;
+  bool hasRole(List<UserType> roles) {
+    if (_currentSession == null) {
+      return false;
+    }
+    for (UserType role in roles) {
+      if (_currentSession["role"] == role.index) {
+        return true;
+      }
+    }
+    return false;
   }
 
   Future<User> getUser() async {

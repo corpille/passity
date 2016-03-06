@@ -6,12 +6,10 @@ class UserController {
   /// Creates a new user
   @app.Route("/", methods: const [app.PUT])
   Future addUser(@Decode() User user) async {
-    //encode user, and insert it in the "user" table.
-
     List<User> users = await postgreSql.query(
         "SELECT * from users WHERE login = " + user.login, User);
-    print(users);
     if (users != null && users.length == 0) {
+      //encode user, and insert it in the "user" table.
       user.key = Encryption.generateKey(user.password);
       user.password = Encryption.SHA256(user.password);
       await postgreSql.execute(
@@ -44,5 +42,16 @@ class UserController {
       throw ErrorResponse.userBadPassword();
     }
     throw ErrorResponse.loginNotFound();
+  }
+
+  /// Get a user
+  @app.Route("/:id", methods: const [app.GET])
+  Future getUser(String id) async {
+    List<User> users = await postgreSql.query(
+        "SELECT * from users WHERE id = '" + id + "'", User);
+    if (users == null || users.length == 0) {
+      return ErrorResponse.userNotFound();
+    }
+    return encodeJson(users.first.escape());
   }
 }
