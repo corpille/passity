@@ -10,7 +10,7 @@ abstract class Model {
   @Field()
   String id;
 
-  Future createTable(PostgreSql postgreSql) async {
+  Future createTable(postgreSql) async {
     InstanceMirror im = reflect(this);
     ClassMirror cm = im.type;
     var table;
@@ -60,6 +60,28 @@ abstract class Model {
         return "json";
     }
     return "text";
+  }
+
+  /// Transform the current class into a Map
+  /// in order to be treated by the JSON functions
+  Map toJson() {
+    Map map = new Map();
+    if (this.id != null && this.id != "") {
+      map["id"] = this.id;
+    }
+    return map;
+  }
+
+  void checkData(Map data) {
+    if (data.containsKey('id') &&
+        data['id'] is String &&
+        data['id'].isNotEmpty) {
+      id = data['id'];
+    }
+  }
+
+  String toString() {
+    return JSON.encode(toJson());
   }
 }
 

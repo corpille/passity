@@ -7,7 +7,7 @@ class UserController {
   @app.Route("/", methods: const [app.PUT])
   Future addUser(@Decode() User user) async {
     List<User> users = await postgreSql.query(
-        "SELECT * from users WHERE login = " + user.login, User);
+        "SELECT * from users WHERE login = '${user.login}'", User);
     if (users != null && users.length == 0) {
       //encode user, and insert it in the "user" table.
       user.key = Encryption.generateKey(user.password);
@@ -25,7 +25,7 @@ class UserController {
   @app.Route("/sign-in", methods: const [app.POST])
   Future signIn(@Decode() User data) async {
     List<User> users = await postgreSql.query(
-        "SELECT * from users WHERE login = " + data.login, User);
+        "SELECT * from users WHERE login = '${data.login}'", User);
     if (users != null && users.length == 1) {
       User user = users.first;
       if (user.password == Encryption.SHA256(data.password)) {
@@ -33,7 +33,7 @@ class UserController {
           var token = new Session(app.request).connect(user);
           user.session_token = token;
           var data = JSON.decode(encodeJson(user.escape()));
-          data["token"] = token;
+          data["session_token"] = token;
           return JSON.encode(data);
         } catch (e) {
           throw ErrorResponse.loginError();
@@ -46,7 +46,24 @@ class UserController {
 
   /// Get a user
   @app.Route("/:id", methods: const [app.GET])
-  Future getUser(String id) async {
+  Future getUser(@CurrentUid() uid, String id) async {
+    if (id == "me") {
+      id = uid;
+    }
+    List<User> users = await postgreSql.query(
+        "SELECT * from users WHERE id = '" + id + "'", User);
+    if (users == null || users.length == 0) {
+      return ErrorResponse.userNotFound();
+    }
+    return encodeJson(users.first.escape());
+  }
+
+  /// Get a user
+  @app.Route("/:id", methods: const [app.GET])
+  Future isAuth(@CurrentUid() uid, String id) async {
+    if (id == "me") {
+      id = uid;
+    }
     List<User> users = await postgreSql.query(
         "SELECT * from users WHERE id = '" + id + "'", User);
     if (users == null || users.length == 0) {

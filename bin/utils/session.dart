@@ -66,11 +66,13 @@ class Session {
   }
 
   Future<User> getUser() async {
-    String uid = getUID();
-    List<User> users =
-        await postgreSql.query("select * from users where id = " + uid, User);
-    if (users != null && users.length > 0) {
-      return users.first;
+    String uid = await getUID();
+    if (uid != null) {
+      List<User> users = await postgreSql.query(
+          "select * from users where id = '${uid}'", User);
+      if (users != null && users.length > 0) {
+        return users.first;
+      }
     }
     return null;
   }

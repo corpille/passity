@@ -23,6 +23,7 @@ import 'package:redstone_mapper_pg/manager.dart';
 import 'package:passity/models.dart';
 
 /// Controllers
+part "controller/api_controller.dart";
 part "controller/user_controller.dart";
 
 /// Utils

@@ -1,0 +1,22 @@
+<nav>
+  <div class="content">
+    <div class="logo">
+      <a class="logo-link" href="/">
+        Passity
+      </a>
+    </div>
+    <div id="navbar" class="ok pull-right">
+      <ul class="nav navbar-nav">
+        <li *ngIf="!session.isAuth">
+          <a [routerLink]="['SignIn']">Sign in</a>
+        </li>
+        <li *ngIf="session.isAuth">
+          <a (click)="logout()">Log out</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="container">
+  <router-outlet></router-outlet>
+</div>

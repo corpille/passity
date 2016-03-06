@@ -1,7 +1,7 @@
-navbar {
+nav {
   display: block;
-  background-color: #1a1c22;
-  border-color: #1a1c22;
+  background-color: @DarkGrey;
+  border-color: @DarkGrey;
   position: fixed;
   z-index: 999;
   right: 0;
@@ -28,6 +28,10 @@ navbar {
         line-height: 21px;
         height: 50px;
       }
+    }
+
+    .navbar-nav > li > a {
+      cursor: pointer;
     }
 
     .navbar-nav > li > a:hover,

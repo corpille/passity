@@ -205,6 +205,10 @@ packages:
     description: shelf
     source: hosted
     version: "0.6.5"
+  shelf_proxy:
+    description: shelf_proxy
+    source: hosted
+    version: "0.1.0+2"
   shelf_static:
     description: shelf_static
     source: hosted

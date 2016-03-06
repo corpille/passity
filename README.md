@@ -1,5 +1,5 @@
 # Passity
-
+The night manager S01E03
 ## Description
 
 Passity is a web-based highly secured password keeper.
@@ -45,4 +45,7 @@ Where the parameters are:
 
 # Running Passity
 
-TODO
+To launch Passity, simply execute the following command:
+```
+dart launcher.dart -s
+```

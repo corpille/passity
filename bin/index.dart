@@ -23,7 +23,7 @@ main(List<String> args) async {
   await TableCreator.createTables(postgreSql);
 
   var parser = new ArgParser();
-  parser.addOption('port', abbr: 'p', defaultsTo: "8080");
+  parser.addOption('port', abbr: 'p', defaultsTo: "8081");
   var results = parser.parse(args);
 
   app.showErrorPage = false;
