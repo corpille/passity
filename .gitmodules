@@ -1,0 +1,3 @@
+[submodule "dependencies/redstone_mapper_pg"]
+	path = dependencies/redstone_mapper_pg
+	url = git@github.com:corpille/redstone_mapper_pg.git
