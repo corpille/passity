@@ -40,6 +40,9 @@ Future<Response> requestHandler(Request request) async {
     return proxyHandler("http://127.0.0.1:8001")(request);
   }
   filePath = path + rewrittingFunc(filePath);
+  if (!filePath.split("/").last.contains(".")) {
+    filePath = path + "/index.html";
+  }
   var file = new File(filePath);
 
   var fileStat = file.statSync();
