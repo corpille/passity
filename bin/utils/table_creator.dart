@@ -6,11 +6,11 @@ class TableCreator {
     LibraryMirror library;
     mirrorSystem.libraries.forEach((lk, LibraryMirror l) {
       var name = MirrorSystem.getName(l.qualifiedName);
-      if (name == "models") {
+      if (name == "pg_models") {
         library = l;
       }
     });
-    List<Model> models = new List();
+    List<PgModel> models = new List();
     library.declarations.forEach((Symbol dk, DeclarationMirror d) {
       var table;
       d.metadata.forEach((InstanceMirror metadata) {
@@ -26,8 +26,22 @@ class TableCreator {
         }
       }
     });
-    for (Model model in models) {
+    for (PgModel model in models) {
       await model.createTable(postgreSql);
+    }
+  }
+
+  static Future createAdminUser(
+      PostgreSql postgreSql, String login, String password) async {
+    User user = new User();
+    user.login = login;
+    user.key = Encryption.generateKey(password);
+    user.password = Encryption.SHA256(password);
+    user.role = UserType.ADMIN.index;
+    List<User> users = await postgreSql.query(
+        "SELECT * from users WHERE login = '${user.login}'", User);
+    if (users != null && users.length == 0) {
+      await user.save();
     }
   }
 }

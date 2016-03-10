@@ -1,4 +1,4 @@
-part of api;
+part of tools;
 
 class Encryption {
   static final int KEY_SIZE = 32;

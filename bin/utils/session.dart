@@ -31,7 +31,11 @@ class Session {
   /// Generate a jwt token for the current session
   ///
   String connect(User user) {
-    var claimSet = new MapJwtClaimSet({"uid": user.id, "role": user.role});
+    var claimSet = new MapJwtClaimSet({
+      "uid": user.id,
+      "role": user.role,
+      "token": Encryption.SHA256(Encryption.SHA512(user.password))
+    });
     final jwt = new JsonWebToken.jws(claimSet, _signatureContext);
     return jwt.encode();
   }
@@ -53,6 +57,13 @@ class Session {
     return null;
   }
 
+  String getToken() {
+    if (_req.headers.containsKey(SESSION_HEADER)) {
+      return _currentSession["token"];
+    }
+    return null;
+  }
+
   bool hasRole(List<UserType> roles) {
     if (_currentSession == null) {
       return false;
@@ -66,7 +77,7 @@ class Session {
   }
 
   Future<User> getUser() async {
-    String uid = await getUID();
+    String uid = getUID();
     if (uid != null) {
       List<User> users = await postgreSql.query(
           "select * from users where id = '${uid}'", User);

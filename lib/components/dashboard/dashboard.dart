@@ -2,14 +2,15 @@ part of components;
 
 @Component(
     selector: 'dashboard',
-    templateUrl: 'components/dashboard/dashboard_component.html')
-class DashboardComponent implements OnInit {
+    templateUrl: 'dashboard/dashboard.html',
+    directives: const [RouterLink])
+class Dashboard implements OnInit {
   Session session;
   final Router _router;
   final RouteParams _routeParams;
   final SessionManager _sessionManager;
 
-  DashboardComponent(this._router, this._routeParams, this._sessionManager);
+  Dashboard(this._router, this._routeParams, this._sessionManager);
 
   @override
   ngOnInit() {

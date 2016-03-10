@@ -33,7 +33,7 @@ class Config {
   }
 
   void checkPostgreConfig() {
-    if (configs["postgres"] == null) {
+    if (configs["postgres"] == null || !(configs["postgres"] is Map)) {
       throw "Missing postgres configuration";
     }
     var config = configs["postgres"];
@@ -43,5 +43,22 @@ class Config {
         throw "Missing " + configName + " in postgres configuration";
       }
     });
+  }
+
+  Map<String, String> getAdminCredential() {
+    if (configs["admin_login"] == null ||
+        !(configs["admin_login"] is Map) ||
+        configs["admin_login"]["login"] == null ||
+        !(configs["admin_login"]["login"] is String) ||
+        configs["admin_login"]["login"] == "" ||
+        configs["admin_login"]["password"] == null ||
+        !(configs["admin_login"]["password"] is String) ||
+        configs["admin_login"]["password"] == "") {
+      return null;
+    }
+    return {
+      "login": configs["admin_login"]["login"],
+      "password": configs["admin_login"]["password"]
+    };
   }
 }

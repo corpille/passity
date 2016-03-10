@@ -4,3 +4,6 @@ postgres:
   dbName: "passity"
   login: "passity"
   password: "password"
+admin_login:
+  login: admin
+  password: pass

@@ -1,9 +1,7 @@
 part of components;
 
-@Component(
-    selector: 'sign-in',
-    templateUrl: 'components/forms/sign_in/sign_in_component.html')
-class SignInComponent implements OnInit {
+@Component(selector: 'sign-in', templateUrl: 'forms/sign_in/sign_in.html')
+class SignIn implements OnInit {
   Session session;
   User user = new User();
   var hasError = false;
@@ -11,7 +9,7 @@ class SignInComponent implements OnInit {
   final RouteParams _routeParams;
   final SessionManager _sessionManager;
 
-  SignInComponent(this._router, this._routeParams, this._sessionManager);
+  SignIn(this._router, this._routeParams, this._sessionManager);
 
   @override
   ngOnInit() {

@@ -4,7 +4,7 @@ import 'dart:html';
 import 'dart:async';
 import 'dart:convert';
 
-import "package:passity/models.dart";
+import "package:passity/models/models.dart";
 
 part "dao/dao.dart";
 part "dao/request.dart";

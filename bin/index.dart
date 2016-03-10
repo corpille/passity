@@ -13,17 +13,29 @@ handleResponseHeader() async {
   });
 }
 
+Future initPostgres(Config config) async {
+  var dbManager = new PostgreSqlManager(config.getPostgreUri(), min: 1, max: 3);
+  var postgreSql = await dbManager.getConnection();
+  new ORM.fromPostgres(postgreSql);
+  bootstrapMapper();
+  await TableCreator.createTables(postgreSql);
+  var credential = config.getAdminCredential();
+  if (credential != null) {
+    await TableCreator.createAdminUser(
+        postgreSql, credential["login"], credential["password"]);
+  }
+  return dbManager;
+}
+
 main(List<String> args) async {
   initCipher();
   var config = new Config();
   await config.getConfigs();
 
-  var dbManager = new PostgreSqlManager(config.getPostgreUri(), min: 1, max: 3);
-  var postgreSql = await dbManager.getConnection();
-  await TableCreator.createTables(postgreSql);
+  var dbManager = await initPostgres(config);
 
   var parser = new ArgParser();
-  parser.addOption('port', abbr: 'p', defaultsTo: "8081");
+  parser.addOption('port', abbr: 'p', defaultsTo: "8001");
   var results = parser.parse(args);
 
   app.showErrorPage = false;

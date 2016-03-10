@@ -71,8 +71,13 @@ class Dao {
         return false;
       });
 
+  /// Users
   Future<Model> signIn(Map login) =>
       _toModel(_req.signIn(JSON.encode(login)), new User());
   Future<Model> getUser(String id) => _toModel(_req.getUser(id), new User());
   Future<bool> logout() async => true;
+
+  /// Passwords
+  Future addPassword(Map password) =>
+      _toModel(_req.addPassword(JSON.encode(password)), new Password());
 }

@@ -14,6 +14,10 @@ class CurrentUid {
   const CurrentUid();
 }
 
+class CurrentToken {
+  const CurrentToken();
+}
+
 void SecurityPlugin(app.Manager manager) {
   manager.addRouteWrapper(Secure, (metadata, injector, request, route) async {
     var session = new Session(request);
@@ -29,11 +33,16 @@ void SecurityPlugin(app.Manager manager) {
 
   manager.addParameterProvider(
       CurrentUser,
-      (metadata, type, handlerName, paramName, req, injector) =>
-          new Session(req).getUser());
+      (metadata, type, handlerName, paramName, req, injector) async =>
+          await new Session(req).getUser());
 
   manager.addParameterProvider(
       CurrentUid,
       (metadata, type, handlerName, paramName, req, injector) =>
           new Session(req).getUID());
+
+  manager.addParameterProvider(
+      CurrentToken,
+      (metadata, type, handlerName, paramName, req, injector) =>
+          new Session(req).getToken());
 }

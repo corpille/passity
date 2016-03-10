@@ -1,4 +1,4 @@
-part of api;
+part of tools;
 
 class Utils {
   static String randomString(int length) {

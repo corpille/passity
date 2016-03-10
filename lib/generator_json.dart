@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'dart:mirrors';
-import 'package:passity/models.dart';
+import "package:passity/models/models.dart";
 import 'package:redstone_mapper/mapper.dart';
 
 void main() {

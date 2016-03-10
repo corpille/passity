@@ -31,8 +31,13 @@ class Request {
     return c.future;
   }
 
+  /// Users
   Future<HttpRequest> isAuth() => send("GET", "text", "isAuth");
   Future<HttpRequest> signIn(String user) =>
       send("POST", "json", "user/sign-in", data: user);
   Future<HttpRequest> getUser(String id) => send("GET", "json", "user/" + id);
+
+  /// Passwords
+  Future<HttpRequest> addPassword(String password) =>
+      send("PUT", "json", "password/", data: password);
 }

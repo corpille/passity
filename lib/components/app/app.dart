@@ -2,15 +2,13 @@ part of components;
 
 @Component(
     selector: 'my-app',
-    templateUrl: 'components/app/app_component.html',
+    templateUrl: 'app/app.html',
     directives: const [RouterOutlet, RouterLink])
 @RouteConfig(const [
+  const Route(path: '/sign-in', name: "SignIn", component: SignIn),
+  const Route(path: '/', name: "Dashboard", component: Dashboard),
   const Route(
-      path: '/sign-in',
-      name: "SignIn",
-      component: SignInComponent,
-      useAsDefault: true),
-  const Route(path: '/', name: "Dashboard", component: DashboardComponent)
+      path: '/add-password', name: "AddPassword", component: AddPassword)
 ])
 class AppComponent {
   SessionManager _sessionManager;

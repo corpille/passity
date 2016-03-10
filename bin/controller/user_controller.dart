@@ -5,18 +5,13 @@ part of api;
 class UserController {
   /// Creates a new user
   @app.Route("/", methods: const [app.PUT])
-  Future addUser(@Decode() User user) async {
-    List<User> users = await postgreSql.query(
-        "SELECT * from users WHERE login = '${user.login}'", User);
-    if (users != null && users.length == 0) {
-      //encode user, and insert it in the "user" table.
-      user.key = Encryption.generateKey(user.password);
-      user.password = Encryption.SHA256(user.password);
-      await postgreSql.execute(
-          "insert into users (login, password, key)"
-          "values (@login, @password, @key)",
-          user);
-      return encodeJson(user.escape());
+  Future addUser(@Decode() User data) async {
+    User user = await new User().findByEmail(data.login);
+    if (user != null) {
+      data.key = Encryption.generateKey(data.password);
+      data.password = Encryption.SHA256(data.password);
+      await user.save();
+      return encodeJson(data.escape());
     }
     return ErrorResponse.userLoginAlreadyUsed();
   }
@@ -24,10 +19,8 @@ class UserController {
   /// Sign the user in
   @app.Route("/sign-in", methods: const [app.POST])
   Future signIn(@Decode() User data) async {
-    List<User> users = await postgreSql.query(
-        "SELECT * from users WHERE login = '${data.login}'", User);
-    if (users != null && users.length == 1) {
-      User user = users.first;
+    User user = await new User().findByEmail(data.login);
+    if (user != null) {
       if (user.password == Encryption.SHA256(data.password)) {
         try {
           var token = new Session(app.request).connect(user);
@@ -50,25 +43,11 @@ class UserController {
     if (id == "me") {
       id = uid;
     }
-    List<User> users = await postgreSql.query(
-        "SELECT * from users WHERE id = '" + id + "'", User);
-    if (users == null || users.length == 0) {
-      return ErrorResponse.userNotFound();
-    }
-    return encodeJson(users.first.escape());
-  }
 
-  /// Get a user
-  @app.Route("/:id", methods: const [app.GET])
-  Future isAuth(@CurrentUid() uid, String id) async {
-    if (id == "me") {
-      id = uid;
-    }
-    List<User> users = await postgreSql.query(
-        "SELECT * from users WHERE id = '" + id + "'", User);
-    if (users == null || users.length == 0) {
+    User user = await new User().findById(id);
+    if (user == null) {
       return ErrorResponse.userNotFound();
     }
-    return encodeJson(users.first.escape());
+    return encodeJson(user.escape());
   }
 }

@@ -1,5 +1,4 @@
 # Passity
-The night manager S01E03
 ## Description
 
 Passity is a web-based highly secured password keeper.
