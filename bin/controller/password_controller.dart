@@ -26,9 +26,10 @@ class PasswordController {
     }
     Password password = new Password();
     password.name = data["name"];
-    password = await password.save();
     try {
       User user = await futureUser;
+      password.users.add(user);
+      password = await password.save();
       Hash hash = new Hash.fromPassword(user.key, data["pass"], token);
       hash.password = password;
       await hash.save();

@@ -26,7 +26,7 @@ class User extends PgModel {
 
   Future findByEmail(String login) async {
     String query = "SELECT * from users WHERE login = '${login}'";
-    List<PgModel> models = await new ORM().postgres.query(query, User);
+    List<PgModel> models = await new ORM().query(query, User);
     if (models.length > 0) {
       return models.first;
     }
