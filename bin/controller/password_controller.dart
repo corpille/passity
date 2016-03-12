@@ -13,6 +13,43 @@ class PasswordController {
     return password;
   }
 
+  /// Get a users passwords
+  @app.Route("/by-user/:id", methods: const [app.GET])
+  Future getUserPasswords(String id) async {
+    User user = await new User().findById(id);
+    if (user == null) {
+      throw ErrorResponse.userNotFound();
+    }
+    return user.passwords;
+  }
+
+  @app.Route("/:id/decoded", methods: const [app.GET])
+  Future getDecodedPassword(@CurrentUser() futureUser,
+      @CurrentToken() String token, String id) async {
+    User user;
+    try {
+      user = await futureUser;
+    } catch (e) {
+      throw ErrorResponse.internalError();
+    }
+    if (user == null) {
+      throw ErrorResponse.userNotFound();
+    }
+    Password password = await new Password().findById(id);
+    if (password == null) {
+      throw ErrorResponse.passwordNotFound();
+    }
+    if (password.users.where((u) => u.id == user.id).length != 1) {
+      throw ErrorResponse.notYours();
+    }
+    for (Hash hash in password.hashes) {
+      if (hash.isGoodHash(user.key, token)) {
+        return {"decoded": hash.getPassword(user.key, token)};
+      }
+    }
+    throw ErrorResponse.internalError();
+  }
+
   /// Create a new password
   @Secure(const [UserType.ADMIN, UserType.EDIT])
   @app.Route("/", methods: const [app.PUT])

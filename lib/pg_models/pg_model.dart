@@ -15,7 +15,7 @@ abstract class PgModel {
     } catch (e) {
       var query = "create table " + tableName + " (";
       var subquery = "";
-      List<VariableMirror> variables = _getClassVariable(im.type);
+      List<VariableMirror> variables = _getFieldsVariable(im.type);
       for (int i = 0; i < variables.length; i++) {
         var varName = MirrorSystem.getName(variables[i].simpleName);
 
@@ -93,7 +93,7 @@ abstract class PgModel {
       isUpdate = false;
     }
     InstanceMirror im = reflect(this);
-    List<VariableMirror> variables = _getClassVariable(im.type);
+    List<VariableMirror> variables = _getFieldsVariable(im.type);
     String tableName = getTableName(im.type);
     if (tableName == null) {
       throw "Class has no table annotation";
@@ -224,11 +224,14 @@ abstract class PgModel {
     List<VariableMirror> oneToMany = _getVarWithAnnotation(im, ManyToMany);
     Map data = new Map();
     for (VariableMirror relation in oneToMany) {
+      ManyToMany rel = hasAnnotation(relation, ManyToMany);
       String firstTable = getTableName(relation.owner).toLowerCase();
       TypeMirror relationType = relation.type.typeArguments.first;
       String secondTable =
           getTableName(relationType.originalDeclaration).toLowerCase();
-      var joinTable = "${secondTable}_${firstTable}";
+      var joinTable = (rel.main)
+          ? "${firstTable}_${secondTable}"
+          : "${secondTable}_${firstTable}";
       String query = "SELECT m.* FROM ${secondTable} m ";
       query += "JOIN ${joinTable} j ON j.${secondTable}_id = m.id ";
       query += "WHERE j.${firstTable}_id = '${id}'";
@@ -275,15 +278,14 @@ abstract class PgModel {
   Map toJson() {
     InstanceMirror im = reflect(this);
     Map content = new Map();
-    im.type.declarations.forEach((Symbol name, variable) {
-      if (variable is VariableMirror) {
-        String varName = MirrorSystem.getName(name);
-        var data = im.getField(variable.simpleName).reflectee;
-        if (data != null) {
-          content[varName] = data;
-        }
+    List<VariableMirror> variables = _getClassVariable();
+    for (VariableMirror variable in variables) {
+      String varName = MirrorSystem.getName(variable.simpleName);
+      var data = im.getField(variable.simpleName).reflectee;
+      if (data != null) {
+        content[varName] = data;
       }
-    });
+    }
     return content;
   }
 
@@ -320,13 +322,29 @@ abstract class PgModel {
     List<VariableMirror> variables = new List();
     cm.declarations.forEach((Symbol s, d) {
       if (d is VariableMirror) {
+        variables.add(d);
+      }
+    });
+    if (cm.superclass != null) {
+      variables.addAll(_getFieldsVariable(cm.superclass));
+    }
+    return variables;
+  }
+
+  List<VariableMirror> _getFieldsVariable([ClassMirror cm]) {
+    if (cm == null) {
+      cm = reflect(this).type;
+    }
+    List<VariableMirror> variables = new List();
+    cm.declarations.forEach((Symbol s, d) {
+      if (d is VariableMirror) {
         if (isField(d)) {
           variables.add(d);
         }
       }
     });
     if (cm.superclass != null) {
-      variables.addAll(_getClassVariable(cm.superclass));
+      variables.addAll(_getFieldsVariable(cm.superclass));
     }
     return variables;
   }

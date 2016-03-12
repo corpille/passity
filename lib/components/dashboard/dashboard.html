@@ -1,9 +1,45 @@
+<div class="modal" [hidden]="!showModal">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" (click)="hidePassword()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">Here is your password !</h4>
+      </div>
+      <div class="modal-body">
+        <input id="realPassword"/>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-link modal-action" (click)="copyPassword()">Copy</button>
+        <button type="button" class="btn-link modal-action" (click)="hidePassword()">
+          <strong>Close</strong>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 <div>
-  <h3>Welcome to passity {{ session.login }}</h3>
+  <h3>Your password list</h3>
   <p>
-    Here will be all your passwords once it will be coded
+    Here are all your passwords
   </p>
-  <button [routerLink]="['AddPassword']" class="btn btn-primary">
-    Add a password
-  </button>
+  <table class="table paswword-container">
+    <thead>
+      <tr>
+        <th class="col-sm-11">Name</th>
+        <th class="col-sm-1 actions">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="#password of srvPassword.passwords">
+        <td>
+          <label>{{ password.name }}</label>
+        </td>
+        <td class="action">
+          <button class="btn btn-primary" (click)="showPassword(password.id)">See it!</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </div>

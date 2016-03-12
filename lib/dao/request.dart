@@ -40,4 +40,8 @@ class Request {
   /// Passwords
   Future<HttpRequest> addPassword(String password) =>
       send("PUT", "json", "password/", data: password);
+  Future<HttpRequest> getPasswordByUser(String userId) =>
+      send("GET", "json", "/password/by-user/" + userId);
+  Future<HttpRequest> getDecodePassword(String id) =>
+      send("GET", "json", "password/" + id + "/decoded");
 }

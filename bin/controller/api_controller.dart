@@ -10,7 +10,7 @@ class APIController {
   @app.Route('/isAuth')
   Future isAuth(@CurrentUser() futureUser) async {
     try {
-      var user = await futureUser;
+      User user = await futureUser;
       if (user == null) {
         throw user;
       }

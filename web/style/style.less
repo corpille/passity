@@ -1,41 +1,102 @@
 @import "web/style/forms.less";
+@import "web/style/modals.less";
 @import "web/style/navbar.less";
 @import "web/style/sign_in.less";
+@import "web/style/dashboard.less";
 
 @DarkGrey: #1a1c22;
 @Grey: #252830;
+@MediumGrey: #51586a;
 @LightGrey: #cfd2da;
+@LightBlue: #1ca8dd;
 
 * {
   box-sizing: border-box;
   outline: none;
 }
 
-.btn {
-  outline: none;
-}
-
 html {
   font-size: 10px;
-}
 
-body {
-  font-weight: 300;
-  letter-spacing: 0;
-  margin: 0;
-  font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 14px;
-  line-height: 1.5;
-  color: @LightGrey;
-  background-color: @Grey;
-  padding-top: 50px;
 
-  a {
+  body {
+    font-weight: 300;
+    letter-spacing: 0;
+    margin: 0;
+    font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
     color: @LightGrey;
+    background-color: @Grey;
+    padding-top: 70px;
 
-    &:hover,
-    &:focus {
-      color: #ffffff;
+    a {
+      color: @LightGrey;
+
+      &:hover,
+      &:focus {
+        color: #ffffff;
+      }
+    }
+
+
+    [hidden], template {
+      display: none !important;
+    }
+
+    .btn {
+      outline: none;
+      text-transform: uppercase;
+      font-weight: 500;
+      font-size: 14px;
+      border: none;
+      border-radius: 3px;
+      box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
+      transition: box-shadow .4s cubic-bezier(.25,.8,.25,1),background-color .4s cubic-bezier(.25,.8,.25,1);
+
+      &:hover,
+      &:focus,
+      &:active,
+      &:active:focus  {
+        outline: none;
+      }
+
+      &:active {
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,.4);
+      }
+
+      &.btn-primary {
+        background-color: #1ca8dd;
+        border: none;
+
+        &:hover,
+        &:active:focus {
+          background-color: #0C80C3;
+        }
+      }
+    }
+
+    a, a:hover,
+    .btn-link:focus, .btn-link:hover {
+      text-decoration: none;
+    }
+
+    .alert {
+      border-radius: 0.25em;
+      font-weight: bold;
+      line-height: 1;
+      border: none;
+      color: white;
+      font-size: 15px;
+      text-align: center;
+
+      &.alert-danger {
+        background-color: #e64759;
+      }
+
+      &.alert-success {
+        background-color: #1bc98e;
+      }
     }
   }
 }

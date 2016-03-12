@@ -6,10 +6,9 @@ class SignIn implements OnInit {
   User user = new User();
   var hasError = false;
   final Router _router;
-  final RouteParams _routeParams;
   final SessionManager _sessionManager;
 
-  SignIn(this._router, this._routeParams, this._sessionManager);
+  SignIn(this._router, this._sessionManager);
 
   @override
   ngOnInit() {

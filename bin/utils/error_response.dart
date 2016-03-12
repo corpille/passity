@@ -42,4 +42,8 @@ class ErrorResponse {
       new app.ErrorResponse(404, _createErrorJson("Token not found"));
   static loginError() =>
       new app.ErrorResponse(500, _createErrorJson("Error while connecting"));
+
+  /// Password
+  static passwordNotFound() =>
+      new app.ErrorResponse(404, _createErrorJson("Password not found"));
 }

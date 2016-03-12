@@ -59,6 +59,18 @@ class Dao {
     });
   }
 
+  Future<List<Model>> _toModelList(
+          Future<HttpRequest> futureRequest, Model modelTemplate) =>
+      _converter(futureRequest, (Map data) {
+        List<Model> resultList = new List();
+        for (var elem in data) {
+          Model model = modelTemplate.newThis();
+          model.checkData(elem);
+          resultList.add(model);
+        }
+        return resultList;
+      });
+
   Future<bool> isAuth() => _converter(_req.isAuth(), (Map data) {
         if (data.containsKey("isAuth") &&
             data["isAuth"] is bool &&
@@ -80,4 +92,8 @@ class Dao {
   /// Passwords
   Future addPassword(Map password) =>
       _toModel(_req.addPassword(JSON.encode(password)), new Password());
+  Future getPasswordByUser(String userId) =>
+      _toModelList(_req.getPasswordByUser(userId), new Password());
+  Future getDecodePassword(String id) =>
+      _converter(_req.getDecodePassword(id), (data) => data);
 }

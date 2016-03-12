@@ -1,0 +1,70 @@
+.modal {
+  display: flex;
+  padding-right: 15px;
+  color: @MediumGrey;
+  background-color: rgba(0, 0, 0, 0.5);
+
+  .modal-dialog {
+    margin: auto;
+
+    .modal-content {
+      position: relative;
+      background-color: #ffffff;
+      border: 1px solid #999999;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+      border-radius: 6px;
+      background-clip: padding-box;
+      outline: 0;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+
+      .modal-title {
+        margin: 0;
+        line-height: 1.5;
+        font-size: 18px;
+      }
+    }
+
+    &.modal-sm {
+      .modal-actions {
+
+        &:before,
+        &:after {
+          content: " ";
+          display: table;
+        }
+
+        &:after {
+          clear: both;
+        }
+
+        button {
+          float: left;
+          width: 50%;
+          padding: 15px;
+          border: solid #e5e5e5;
+          border-width: 1px 0 0;
+          color: @LightBlue;
+          transtion: background .2s;
+
+          &:hover {
+            background-color: #e8e8e8;
+          }
+
+          &:first-child {
+            border-bottom-left-radius: 5px;
+          }
+
+          &:last-child {
+            border-bottom-right-radius: 5px;
+          }
+        }
+      }
+    }
+  }
+  
+  #realPassword {
+    width: 100%;
+    text-align: center;
+    border: none;
+  }
+}

@@ -6,14 +6,13 @@ part of components;
 class AddPassword implements OnInit {
   Session session;
   Map password = new Map();
-  var hasError = false;
+  var error = false;
+  var success = false;
   final Router _router;
-  final RouteParams _routeParams;
   final SessionManager _sessionManager;
   final SrvPassword _srvPassword;
 
-  AddPassword(
-      this._router, this._routeParams, this._sessionManager, this._srvPassword);
+  AddPassword(this._router, this._sessionManager, this._srvPassword);
 
   @override
   ngOnInit() {
@@ -23,11 +22,19 @@ class AddPassword implements OnInit {
     }
   }
 
-  onSubmit() async {
+  onSubmit(NgForm addPasswordForm) async {
     try {
       await _srvPassword.addPassword(password);
+      success = true;
+      error = false;
+      addPasswordForm.controls.forEach((name, control) {
+        control.updateValue('');
+        control.setErrors(null);
+      });
     } catch (e) {
-      hasError = e.text;
+      print(e);
+      success = false;
+      error = true;
     }
   }
 }

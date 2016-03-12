@@ -4,7 +4,21 @@ part of services;
 class SrvPassword {
   Dao _dao = new Dao();
 
+  List<Password> passwords;
+
   addPassword(Map password) async {
-    await _dao.addPassword(password);
+    if (passwords == null) {
+      passwords = new List();
+    }
+    passwords.add(await _dao.addPassword(password));
+  }
+
+  getPasswordByUser(String userId) async {
+    passwords = await _dao.getPasswordByUser(userId);
+  }
+
+  Future<String> getDecodePassword(String id) async {
+    var result = await _dao.getDecodePassword(id);
+    return result["decoded"].toString();
   }
 }

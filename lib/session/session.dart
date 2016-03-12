@@ -2,21 +2,18 @@ part of session;
 
 class Session {
   bool isAuth = false;
-  String uid = null;
-  String login = null;
+  User user;
 
-  void update(User user) {
-    uid = user.id;
-    login = user.login;
+  void update(User u) {
+    user = u;
   }
 
   void delete() {
     isAuth = false;
-    uid = null;
-    login = null;
+    user = null;
   }
 
   String toString() {
-    return "{isAuth: ${isAuth}, uid: \"${uid}\", login: \"${login}\"}";
+    return "{isAuth: ${isAuth}, user: \"${user}\"}";
   }
 }

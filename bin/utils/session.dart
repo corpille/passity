@@ -23,9 +23,7 @@ class Session {
     return (uid == null) ? false : true;
   }
 
-  Future disconnect() async {
-    //TODO banToken
-  }
+  Future disconnect() async {}
 
   ///
   /// Generate a jwt token for the current session
@@ -79,10 +77,9 @@ class Session {
   Future<User> getUser() async {
     String uid = getUID();
     if (uid != null) {
-      List<User> users = await postgreSql.query(
-          "select * from users where id = '${uid}'", User);
-      if (users != null && users.length > 0) {
-        return users.first;
+      User user = await new User().findById(uid);
+      if (user != null) {
+        return user;
       }
     }
     return null;

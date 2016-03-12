@@ -30,16 +30,18 @@ class Hash extends PgModel {
     size = password.length;
   }
 
-  String getPassword(User u, String token) {
-    // var key = _decodeKey(u, token);
-    // var hash = h[Encryption.SHA512(key)];
-    // var secure_password = Utils.createStringFromHexString(hash);
-    // var keyChain = new Uint8List.fromList(key.codeUnits);
-    // var password = Encryption.AES(secure_password, keyChain, encode: false);
-    // var cipher = new String.fromCharCodes(password);
-    // var pos = p[Encryption.SHA512(key)];
-    // return cipher.substring(pos[0], pos[0] + pos[1]);
-    return "";
+  bool isGoodHash(String userKey, String token) {
+    var decodedKey = _decodeKey(userKey, token);
+    return identifer == Encryption.SHA512(decodedKey);
+  }
+
+  String getPassword(String userKey, String token) {
+    var key = _decodeKey(userKey, token);
+    var secure_password = Utils.createStringFromHexString(hash);
+    var keyChain = new Uint8List.fromList(key.codeUnits);
+    var password = Encryption.AES(secure_password, keyChain, encode: false);
+    var cipher = new String.fromCharCodes(password);
+    return cipher.substring(pos, pos + size);
   }
 
   String _decodeKey(String key, String token) {

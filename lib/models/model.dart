@@ -1,6 +1,6 @@
 part of models;
 
-class Model {
+abstract class Model {
   String id;
 
   /// Transform the current class into a Map
@@ -20,6 +20,8 @@ class Model {
       id = data['id'];
     }
   }
+
+  Model newThis();
 
   String toString() {
     return JSON.encode(toJson());

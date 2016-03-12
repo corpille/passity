@@ -5,8 +5,21 @@
         Passity
       </a>
     </div>
-    <div id="navbar" class="ok pull-right">
+    <div class="navbar" class="ok ">
       <ul class="nav navbar-nav">
+        <li *ngIf="session.isAuth">
+          <a  [routerLink]="['Dashboard']">Dashboard</a>
+        </li>
+        <li *ngIf="session.isAuth">
+          <a  [routerLink]="['AddPassword']">Create a password</a>
+        </li>
+      </ul>
+    </div>
+    <div class="navbar" class="ok pull-right">
+      <ul class="nav navbar-nav">
+        <li *ngIf="session.isAuth">
+          <span>{{ session.user.login }}</span>
+        </li>
         <li *ngIf="!session.isAuth">
           <a [routerLink]="['SignIn']">Sign in</a>
         </li>
