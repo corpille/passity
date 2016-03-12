@@ -16,7 +16,14 @@ class User extends PgModel {
   @Field(view: "role")
   int role = UserType.READ.index;
 
+  @ManyToMany(main: false)
+  List<Password> passwords;
+
   String session_token;
+
+  User() {
+    passwords = new List();
+  }
 
   User escape() {
     password = null;

@@ -5,10 +5,14 @@ class Password extends PgModel {
   @Field()
   String name;
 
-  @ManyToMany()
+  @ManyToMany(main: true)
   List<User> users;
+
+  @OneToMany()
+  List<Hash> hashes;
 
   Password() {
     users = new List();
+    hashes = new List();
   }
 }

@@ -11,7 +11,7 @@ class UserController {
       data.key = Encryption.generateKey(data.password);
       data.password = Encryption.SHA256(data.password);
       await user.save();
-      return encodeJson(data.escape());
+      return data.escape();
     }
     return ErrorResponse.userLoginAlreadyUsed();
   }
@@ -25,7 +25,7 @@ class UserController {
         try {
           var token = new Session(app.request).connect(user);
           user.session_token = token;
-          var data = JSON.decode(encodeJson(user.escape()));
+          var data = user.escape().toJson();
           data["session_token"] = token;
           return JSON.encode(data);
         } catch (e) {
@@ -48,6 +48,6 @@ class UserController {
     if (user == null) {
       return ErrorResponse.userNotFound();
     }
-    return encodeJson(user.escape());
+    return user.escape();
   }
 }

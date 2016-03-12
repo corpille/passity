@@ -5,12 +5,17 @@ class Table {
   const Table([this.name]);
 }
 
+class OneToMany {
+  const OneToMany();
+}
+
 class ManyToOne {
   const ManyToOne();
 }
 
 class ManyToMany {
-  const ManyToMany();
+  final bool main;
+  const ManyToMany({this.main});
 }
 
 class ORM {

@@ -21,7 +21,7 @@ abstract class PgModel {
 
         var isManyToOne = hasAnnotation(variables[i], ManyToOne);
         var isManyToMany = hasAnnotation(variables[i], ManyToMany);
-        if (isManyToMany != null) {
+        if (isManyToMany != null && (isManyToMany as ManyToMany).main == true) {
           subquery += await _createManyToManyTable(isManyToMany, variables[i]);
         } else {
           if (varName == "id") {
@@ -114,7 +114,7 @@ abstract class PgModel {
       String varName = MirrorSystem.getName(variables[i].simpleName);
       var isManyToOne = hasAnnotation(variables[i], ManyToOne);
       var isManyToMany = hasAnnotation(variables[i], ManyToMany);
-      if (isManyToMany != null) {
+      if (isManyToMany != null && (isManyToMany as ManyToMany).main == true) {
         subquery = await _handleSaveManyToMany(im, variables[i]);
       } else {
         var name = "";
@@ -202,13 +202,89 @@ abstract class PgModel {
     if (tableName == null) {
       throw "Class has no table annotation";
     }
+    Map data = new Map();
+    data.addAll(await _getOneToManyRelations(im, id));
+    data.addAll(await _getManyToManyRelations(im, id));
+
     String query = "SELECT * from " + tableName + " WHERE id = '${id}'";
     List<PgModel> models =
         await new ORM().query(query, im.reflectee.runtimeType);
     if (models.length > 0) {
-      return models.first;
+      var model = models.first;
+      InstanceMirror i = reflect(model);
+      data.forEach((key, value) {
+        i.setField(key, value);
+      });
+      return model;
     }
     return null;
+  }
+
+  Future _getManyToManyRelations(InstanceMirror im, String id) async {
+    List<VariableMirror> oneToMany = _getVarWithAnnotation(im, ManyToMany);
+    Map data = new Map();
+    for (VariableMirror relation in oneToMany) {
+      String firstTable = getTableName(relation.owner).toLowerCase();
+      TypeMirror relationType = relation.type.typeArguments.first;
+      String secondTable =
+          getTableName(relationType.originalDeclaration).toLowerCase();
+      var joinTable = "${secondTable}_${firstTable}";
+      String query = "SELECT m.* FROM ${secondTable} m ";
+      query += "JOIN ${joinTable} j ON j.${secondTable}_id = m.id ";
+      query += "WHERE j.${firstTable}_id = '${id}'";
+      List<PgModel> models = await new ORM()
+          .query(query, relationType.originalDeclaration.reflectedType);
+      data[relation.simpleName] = models;
+    }
+    return data;
+  }
+
+  Future _getOneToManyRelations(InstanceMirror im, String id) async {
+    List<VariableMirror> oneToMany = _getVarWithAnnotation(im, OneToMany);
+    Map data = new Map();
+    for (VariableMirror relation in oneToMany) {
+      String firstTable = getTableName(relation.owner).toLowerCase();
+      TypeMirror relationType = relation.type.typeArguments.first;
+      String secondTable =
+          getTableName(relationType.originalDeclaration).toLowerCase();
+      String query = "select m.* FROM ${secondTable} m ";
+      query += "WHERE m.${firstTable}_id = '${id}'";
+      List<PgModel> models = await new ORM()
+          .query(query, relationType.originalDeclaration.reflectedType);
+      data[relation.simpleName] = models;
+    }
+    return data;
+  }
+
+  List<VariableMirror> _getVarWithAnnotation(InstanceMirror im, Type type) {
+    List<VariableMirror> res = new List();
+    im.type.declarations.forEach((Symbol s, variable) {
+      if (variable is VariableMirror) {
+        if (hasAnnotation(variable, type) != null) {
+          res.add(variable);
+        }
+      }
+    });
+    return res;
+  }
+
+  String toString() {
+    return JSON.encode(toJson());
+  }
+
+  Map toJson() {
+    InstanceMirror im = reflect(this);
+    Map content = new Map();
+    im.type.declarations.forEach((Symbol name, variable) {
+      if (variable is VariableMirror) {
+        String varName = MirrorSystem.getName(name);
+        var data = im.getField(variable.simpleName).reflectee;
+        if (data != null) {
+          content[varName] = data;
+        }
+      }
+    });
+    return content;
   }
 
   String _typedVar(TypeMirror mType, dynamic value) {

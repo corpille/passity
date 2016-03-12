@@ -10,7 +10,7 @@ class PasswordController {
     if (password == null) {
       return ErrorResponse.userNotFound();
     }
-    return encodeJson(password);
+    return password;
   }
 
   /// Create a new password
@@ -36,6 +36,6 @@ class PasswordController {
     } catch (e) {
       throw ErrorResponse.internalError();
     }
-    return encodeJson(password);
+    return password;
   }
 }
