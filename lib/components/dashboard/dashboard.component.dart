@@ -1,6 +1,7 @@
 part of components;
 
-@Component(selector: 'dashboard', templateUrl: 'dashboard/dashboard.html', directives: const [RouterLink, NgClass])
+@Component(
+    selector: 'dashboard', templateUrl: 'dashboard/dashboard.component.html', directives: const [RouterLink, NgClass])
 class Dashboard implements OnInit {
   Session session;
   bool showModal = false;

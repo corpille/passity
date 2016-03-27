@@ -1,8 +1,6 @@
 part of components;
 
-@Component(
-    selector: 'add-password',
-    templateUrl: 'forms/add_password/add_password.html')
+@Component(selector: 'add-password', templateUrl: 'add-password/add-password.component.html')
 class AddPassword implements OnInit {
   Session session;
   Map password = new Map();

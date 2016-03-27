@@ -1,6 +1,6 @@
 part of components;
 
-@Component(selector: 'sign-in', templateUrl: 'forms/sign_in/sign_in.html')
+@Component(selector: 'sign-in', templateUrl: 'sign-in/sign-in.component.html')
 class SignIn implements OnInit {
   Session session;
   User user = new User();
