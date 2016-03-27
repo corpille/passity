@@ -27,8 +27,7 @@ Future<Response> requestHandler(Request request) async {
   var filePath = request.url.path;
 
   if (filePath.startsWith("api/")) {
-    var path =
-        Uri.parse(request.requestedUri.toString().replaceAll("/api", ""));
+    var path = Uri.parse(request.requestedUri.toString().replaceAll("/api", ""));
 
     request = new Request(request.method, path,
         protocolVersion: request.protocolVersion,
@@ -46,9 +45,7 @@ Future<Response> requestHandler(Request request) async {
   var file = new File(filePath);
 
   var fileStat = file.statSync();
-  var headers = <String, String>{
-    HttpHeaders.CONTENT_LENGTH: fileStat.size.toString()
-  };
+  var headers = <String, String>{HttpHeaders.CONTENT_LENGTH: fileStat.size.toString()};
 
   var contentType = mime.lookupMimeType(file.path);
   if (contentType != null) {
@@ -58,7 +55,6 @@ Future<Response> requestHandler(Request request) async {
 
   if (filePath.indexOf(".css") != -1 && filePath.indexOf(".min.css") == -1) {
     List<String> args = [];
-    //less = new Less();
 
     args.add('-no-color');
     args.add('--strict-math=on');
@@ -72,8 +68,7 @@ Future<Response> requestHandler(Request request) async {
 }
 
 void startServer() {
-  Process.run('dart', ['bin/api.dart', "--port", "8001"]).then(
-      (ProcessResult results) {
+  Process.run('dart', ['bin/api.dart', "--port", "8001"]).then((ProcessResult results) {
     print(results.stdout);
   });
   print("Server Ready on http://localhost:8001/ !");
@@ -82,13 +77,8 @@ void startServer() {
 main(List<String> args) {
   var parser = new ArgParser();
 
-  parser.addOption('port',
-      abbr: 'p',
-      help: 'port of the client',
-      defaultsTo: '8080',
-      valueHelp: '8080');
-  parser.addFlag('server',
-      abbr: 's', defaultsTo: false, help: 'launch the server of bin');
+  parser.addOption('port', abbr: 'p', help: 'port of the client', defaultsTo: '8080', valueHelp: '8080');
+  parser.addFlag('server', abbr: 's', defaultsTo: false, help: 'launch the server of bin');
   parser.addFlag('help', abbr: 'h', defaultsTo: false, help: 'print the help');
 
   var results = parser.parse(args);

@@ -13,6 +13,20 @@ class PasswordController {
     return password;
   }
 
+  /// Get a password
+  @app.Route("/:id", methods: const [app.DELETE])
+  Future deletePassword(String id) async {
+    Password password = await new Password().findById(id);
+    if (password == null) {
+      return ErrorResponse.userNotFound();
+    }
+    for (Hash hash in password.hashes) {
+      await hash.delete();
+    }
+    await password.delete();
+    return {"success": true};
+  }
+
   /// Get a users passwords
   @app.Route("/by-user/:id", methods: const [app.GET])
   Future getUserPasswords(String id) async {
@@ -24,8 +38,7 @@ class PasswordController {
   }
 
   @app.Route("/:id/decoded", methods: const [app.GET])
-  Future getDecodedPassword(@CurrentUser() futureUser,
-      @CurrentToken() String token, String id) async {
+  Future getDecodedPassword(@CurrentUser() futureUser, @CurrentToken() String token, String id) async {
     User user;
     try {
       user = await futureUser;
@@ -53,12 +66,8 @@ class PasswordController {
   /// Create a new password
   @Secure(const [UserType.ADMIN, UserType.EDIT])
   @app.Route("/", methods: const [app.PUT])
-  Future putPassword(@CurrentUser() futureUser, @CurrentToken() String token,
-      @app.Body(app.JSON) Map data) async {
-    if (data == null ||
-        !(data is Map) ||
-        !data.containsKey("name") ||
-        !data.containsKey("pass")) {
+  Future putPassword(@CurrentUser() futureUser, @CurrentToken() String token, @app.Body(app.JSON) Map data) async {
+    if (data == null || !(data is Map) || !data.containsKey("name") || !data.containsKey("pass")) {
       throw ErrorResponse.invalidJson();
     }
     Password password = new Password();

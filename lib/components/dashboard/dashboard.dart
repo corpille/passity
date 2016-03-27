@@ -1,12 +1,11 @@
 part of components;
 
-@Component(
-    selector: 'dashboard',
-    templateUrl: 'dashboard/dashboard.html',
-    directives: const [RouterLink, NgClass])
+@Component(selector: 'dashboard', templateUrl: 'dashboard/dashboard.html', directives: const [RouterLink, NgClass])
 class Dashboard implements OnInit {
   Session session;
   bool showModal = false;
+  bool showModalDeletion = false;
+  String currentPasswordId = null;
   final Router _router;
   final SessionManager _sessionManager;
   final SrvPassword srvPassword;
@@ -16,10 +15,10 @@ class Dashboard implements OnInit {
   @override
   ngOnInit() {
     session = _sessionManager.session;
-    srvPassword.getPasswordByUser(session.user.id);
     if (session.isAuth == false) {
-      _router.navigate(["SignIn", {}]);
+      return _router.navigate(["SignIn", {}]);
     }
+    srvPassword.getPasswordByUser(session.user.id);
   }
 
   copyPassword() {
@@ -43,5 +42,20 @@ class Dashboard implements OnInit {
     InputElement input = DOM.query("#realPassword");
     input.value = "";
     showModal = false;
+  }
+
+  showDeletionModal(String id) {
+    currentPasswordId = id;
+    showModalDeletion = true;
+  }
+
+  hideDeletionModal() {
+    currentPasswordId = null;
+    showModalDeletion = false;
+  }
+
+  deletePassword() async {
+    await srvPassword.deletePassword(currentPasswordId);
+    showModalDeletion = false;
   }
 }

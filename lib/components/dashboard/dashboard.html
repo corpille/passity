@@ -19,6 +19,27 @@
     </div>
   </div>
 </div>
+<div class="modal" [hidden]="!showModalDeletion">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" (click)="hideDeletionModal()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">Here is your password !</h4>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete that password</p>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-link modal-action" (click)="hideDeletionModal()">Cancel</button>
+        <button type="button" class="btn-link modal-action" (click)="deletePassword()">
+          <strong>Delete</strong>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 <div>
   <h3>Your password list</h3>
   <p>
@@ -27,17 +48,18 @@
   <table class="table paswword-container">
     <thead>
       <tr>
-        <th class="col-sm-11">Name</th>
-        <th class="col-sm-1 actions">Actions</th>
+        <th class="col-sm-10">Name</th>
+        <th class="col-sm-2 actions">Actions</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="#password of srvPassword.passwords">
-        <td>
+        <td class="col-sm-10">
           <label>{{ password.name }}</label>
         </td>
-        <td class="action">
-          <button class="btn btn-primary" (click)="showPassword(password.id)">See it!</button>
+        <td class="col-sm-2 action">
+          <button class="btn btn-primary" (click)="showPassword(password.id)"><i class="fa fa-eye"></i></button>
+          <button class="btn btn-danger" (click)="showDeletionModal(password.id)"><i class="fa fa-trash"></i></button>
         </td>
       </tr>
     </tbody>

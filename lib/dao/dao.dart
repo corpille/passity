@@ -18,8 +18,7 @@ class Dao {
 
   Dao._internal();
 
-  Future _converter(
-      Future<HttpRequest> futureRequest, callbackIfTrue(Map data)) async {
+  Future _converter(Future<HttpRequest> futureRequest, callbackIfTrue(Map data)) async {
     HttpRequest request;
     try {
       request = await futureRequest;
@@ -59,8 +58,14 @@ class Dao {
     });
   }
 
-  Future<List<Model>> _toModelList(
-          Future<HttpRequest> futureRequest, Model modelTemplate) =>
+  bool _checkBoolean(Map map, String key) {
+    if (map.containsKey(key) && (map[key] is bool)) {
+      return map[key];
+    }
+    return false;
+  }
+
+  Future<List<Model>> _toModelList(Future<HttpRequest> futureRequest, Model modelTemplate) =>
       _converter(futureRequest, (Map data) {
         List<Model> resultList = new List();
         for (var elem in data) {
@@ -84,16 +89,13 @@ class Dao {
       });
 
   /// Users
-  Future<Model> signIn(Map login) =>
-      _toModel(_req.signIn(JSON.encode(login)), new User());
+  Future<Model> signIn(Map login) => _toModel(_req.signIn(JSON.encode(login)), new User());
   Future<Model> getUser(String id) => _toModel(_req.getUser(id), new User());
   Future<bool> logout() async => true;
 
   /// Passwords
-  Future addPassword(Map password) =>
-      _toModel(_req.addPassword(JSON.encode(password)), new Password());
-  Future getPasswordByUser(String userId) =>
-      _toModelList(_req.getPasswordByUser(userId), new Password());
-  Future getDecodePassword(String id) =>
-      _converter(_req.getDecodePassword(id), (data) => data);
+  Future addPassword(Map password) => _toModel(_req.addPassword(JSON.encode(password)), new Password());
+  Future getPasswordByUser(String userId) => _toModelList(_req.getPasswordByUser(userId), new Password());
+  Future getDecodePassword(String id) => _converter(_req.getDecodePassword(id), (data) => data);
+  Future deletePassword(String id) => _converter(_req.deletePassword(id), (Map data) => _checkBoolean(data, "success"));
 }

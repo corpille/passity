@@ -18,7 +18,7 @@
     <div class="navbar" class="ok pull-right">
       <ul class="nav navbar-nav">
         <li *ngIf="session.isAuth">
-          <span>{{ session.user.login }}</span>
+          <span>Welcome {{ session.user.login }}!</span>
         </li>
         <li *ngIf="!session.isAuth">
           <a [routerLink]="['SignIn']">Sign in</a>

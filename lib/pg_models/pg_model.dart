@@ -41,13 +41,11 @@ abstract class PgModel {
     }
   }
 
-  Future _createManyToManyTable(
-      ManyToMany relation, VariableMirror variable) async {
+  Future _createManyToManyTable(ManyToMany relation, VariableMirror variable) async {
     String firstTable = getTableName(variable.owner).toLowerCase();
     if (variable.type.originalDeclaration.simpleName == #List) {
       TypeMirror relationType = variable.type.typeArguments.first;
-      String secondTable =
-          getTableName(relationType.originalDeclaration).toLowerCase();
+      String secondTable = getTableName(relationType.originalDeclaration).toLowerCase();
       return await createRelationTable(firstTable, secondTable);
     }
     return "";
@@ -58,12 +56,9 @@ abstract class PgModel {
     var query = "CREATE TABLE " + table_name + " (";
     query += "${firstTable}_id UUID,";
     query += "${secondTable}_id UUID,";
-    query +=
-        "CONSTRAINT ${firstTable}_${secondTable}_pk PRIMARY KEY (${firstTable}_id, ${secondTable}_id),";
-    query +=
-        "CONSTRAINT FK_${firstTable} FOREIGN KEY (${firstTable}_id) REFERENCES ${firstTable} (id),";
-    query +=
-        "CONSTRAINT FK_${secondTable} FOREIGN KEY (${secondTable}_id) REFERENCES ${secondTable} (id));";
+    query += "CONSTRAINT ${firstTable}_${secondTable}_pk PRIMARY KEY (${firstTable}_id, ${secondTable}_id),";
+    query += "CONSTRAINT FK_${firstTable} FOREIGN KEY (${firstTable}_id) REFERENCES ${firstTable} (id),";
+    query += "CONSTRAINT FK_${secondTable} FOREIGN KEY (${secondTable}_id) REFERENCES ${secondTable} (id));";
     return query;
   }
 
@@ -129,8 +124,7 @@ abstract class PgModel {
         content = _typedVar(variables[i].type, f.reflectee);
 
         if (isUpdate) {
-          query +=
-              name + "=" + content + ((i + 1 == variables.length) ? "" : ", ");
+          query += name + "=" + content + ((i + 1 == variables.length) ? "" : ", ");
         } else {
           names += name + ((i + 1 == variables.length) ? ")" : ", ");
           contents += content + ((i + 1 == variables.length) ? ")" : ", ");
@@ -147,17 +141,14 @@ abstract class PgModel {
     return this;
   }
 
-  Future _handleSaveManyToMany(
-      InstanceMirror im, VariableMirror variable) async {
+  Future _handleSaveManyToMany(InstanceMirror im, VariableMirror variable) async {
     if (variable.type.originalDeclaration.simpleName == #List) {
       List<PgModel> relations = im.getField(variable.simpleName).reflectee;
       if (relations.length > 0) {
         String firstTable = getTableName(variable.owner).toLowerCase();
         TypeMirror relationType = variable.type.typeArguments.first;
-        String secondTable =
-            getTableName(relationType.originalDeclaration).toLowerCase();
-        String query =
-            "SELECT * from ${firstTable}_${secondTable} WHERE ${firstTable}_id = '${id}' AND (";
+        String secondTable = getTableName(relationType.originalDeclaration).toLowerCase();
+        String query = "SELECT * from ${firstTable}_${secondTable} WHERE ${firstTable}_id = '${id}' AND (";
         for (int i = 0; i < relations.length; i++) {
           if (relations[i].id == null) {
             throw "One of the relation does not have an id";
@@ -191,9 +182,30 @@ abstract class PgModel {
     if (tableName == null) {
       throw "Class has no table annotation";
     }
-    String query = "delete from " + tableName + " where id = '${id}'";
-    await new ORM().execute(query);
+    List<VariableMirror> variables = _getFieldsVariable(im.type);
+    var subquery = "";
+    for (int i = 0; i < variables.length; i++) {
+      var isManyToMany = hasAnnotation(variables[i], ManyToMany);
+      if (isManyToMany != null && (isManyToMany as ManyToMany).main == true) {
+        subquery += await _deleteManyToMany(im, variables[i]);
+      }
+    }
+    String query = "delete from ${tableName} where id = '${id}'";
+    await new ORM().execute(subquery + query);
     return this;
+  }
+
+  Future _deleteManyToMany(InstanceMirror im, VariableMirror variable) async {
+    if (variable.type.originalDeclaration.simpleName == #List) {
+      List<PgModel> relations = im.getField(variable.simpleName).reflectee;
+      if (relations.length > 0) {
+        String firstTable = getTableName(variable.owner).toLowerCase();
+        TypeMirror relationType = variable.type.typeArguments.first;
+        String secondTable = getTableName(relationType.originalDeclaration).toLowerCase();
+        return "delete from ${firstTable}_${secondTable} where ${firstTable}_id = '${id}';";
+      }
+    }
+    return "";
   }
 
   Future findById(String id) async {
@@ -207,8 +219,7 @@ abstract class PgModel {
     data.addAll(await _getManyToManyRelations(im, id));
 
     String query = "SELECT * from " + tableName + " WHERE id = '${id}'";
-    List<PgModel> models =
-        await new ORM().query(query, im.reflectee.runtimeType);
+    List<PgModel> models = await new ORM().query(query, im.reflectee.runtimeType);
     if (models.length > 0) {
       var model = models.first;
       InstanceMirror i = reflect(model);
@@ -227,16 +238,12 @@ abstract class PgModel {
       ManyToMany rel = hasAnnotation(relation, ManyToMany);
       String firstTable = getTableName(relation.owner).toLowerCase();
       TypeMirror relationType = relation.type.typeArguments.first;
-      String secondTable =
-          getTableName(relationType.originalDeclaration).toLowerCase();
-      var joinTable = (rel.main)
-          ? "${firstTable}_${secondTable}"
-          : "${secondTable}_${firstTable}";
+      String secondTable = getTableName(relationType.originalDeclaration).toLowerCase();
+      var joinTable = (rel.main) ? "${firstTable}_${secondTable}" : "${secondTable}_${firstTable}";
       String query = "SELECT m.* FROM ${secondTable} m ";
       query += "JOIN ${joinTable} j ON j.${secondTable}_id = m.id ";
       query += "WHERE j.${firstTable}_id = '${id}'";
-      List<PgModel> models = await new ORM()
-          .query(query, relationType.originalDeclaration.reflectedType);
+      List<PgModel> models = await new ORM().query(query, relationType.originalDeclaration.reflectedType);
       data[relation.simpleName] = models;
     }
     return data;
@@ -248,12 +255,10 @@ abstract class PgModel {
     for (VariableMirror relation in oneToMany) {
       String firstTable = getTableName(relation.owner).toLowerCase();
       TypeMirror relationType = relation.type.typeArguments.first;
-      String secondTable =
-          getTableName(relationType.originalDeclaration).toLowerCase();
+      String secondTable = getTableName(relationType.originalDeclaration).toLowerCase();
       String query = "select m.* FROM ${secondTable} m ";
       query += "WHERE m.${firstTable}_id = '${id}'";
-      List<PgModel> models = await new ORM()
-          .query(query, relationType.originalDeclaration.reflectedType);
+      List<PgModel> models = await new ORM().query(query, relationType.originalDeclaration.reflectedType);
       data[relation.simpleName] = models;
     }
     return data;
@@ -352,9 +357,7 @@ abstract class PgModel {
   bool isField(VariableMirror variable) {
     var res = false;
     variable.metadata.forEach((m) {
-      if (m.reflectee is Field ||
-          m.reflectee is ManyToOne ||
-          m.reflectee is ManyToMany) {
+      if (m.reflectee is Field || m.reflectee is ManyToOne || m.reflectee is ManyToMany) {
         res = true;
       }
     });

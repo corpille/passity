@@ -4,11 +4,15 @@
 @import "web/style/sign_in.less";
 @import "web/style/dashboard.less";
 
+@fa-font-path: "../web/fonts";
 @DarkGrey: #1a1c22;
 @Grey: #252830;
 @MediumGrey: #51586a;
 @LightGrey: #cfd2da;
 @LightBlue: #1ca8dd;
+@primary: #1ca8dd;
+@danger: #e64759;
+@success: #1bc98e;
 
 * {
   box-sizing: border-box;
@@ -66,12 +70,22 @@ html {
       }
 
       &.btn-primary {
-        background-color: #1ca8dd;
+        background-color: @primary;
         border: none;
 
         &:hover,
         &:active:focus {
-          background-color: #0C80C3;
+          background-color: lighten(@primary, 10%);
+        }
+      }
+
+      &.btn-danger {
+        background-color: @danger;
+        border: none;
+
+        &:hover,
+        &:active:focus {
+          background-color: lighten(@danger, 10%);
         }
       }
     }
@@ -91,11 +105,11 @@ html {
       text-align: center;
 
       &.alert-danger {
-        background-color: #e64759;
+        background-color: @danger;
       }
 
       &.alert-success {
-        background-color: #1bc98e;
+        background-color: @success;
       }
     }
   }

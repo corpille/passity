@@ -13,6 +13,11 @@ class SrvPassword {
     passwords.add(await _dao.addPassword(password));
   }
 
+  deletePassword(String id) async {
+    await _dao.deletePassword(id);
+    passwords.removeWhere((Password password) => password.id == id);
+  }
+
   getPasswordByUser(String userId) async {
     passwords = await _dao.getPasswordByUser(userId);
   }

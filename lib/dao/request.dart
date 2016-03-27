@@ -8,8 +8,7 @@ class Request {
 
   String _toUrl(String input) => _url + "/" + input;
 
-  Future<HttpRequest> send(String method, String reponseType, String api_path,
-      {data: null}) {
+  Future<HttpRequest> send(String method, String reponseType, String api_path, {data: null}) {
     var c = new Completer();
     HttpRequest request = new HttpRequest();
 
@@ -33,15 +32,12 @@ class Request {
 
   /// Users
   Future<HttpRequest> isAuth() => send("GET", "text", "isAuth");
-  Future<HttpRequest> signIn(String user) =>
-      send("POST", "json", "user/sign-in", data: user);
+  Future<HttpRequest> signIn(String user) => send("POST", "json", "user/sign-in", data: user);
   Future<HttpRequest> getUser(String id) => send("GET", "json", "user/" + id);
 
   /// Passwords
-  Future<HttpRequest> addPassword(String password) =>
-      send("PUT", "json", "password/", data: password);
-  Future<HttpRequest> getPasswordByUser(String userId) =>
-      send("GET", "json", "/password/by-user/" + userId);
-  Future<HttpRequest> getDecodePassword(String id) =>
-      send("GET", "json", "password/" + id + "/decoded");
+  Future<HttpRequest> addPassword(String password) => send("PUT", "json", "password/", data: password);
+  Future<HttpRequest> getPasswordByUser(String userId) => send("GET", "json", "/password/by-user/" + userId);
+  Future<HttpRequest> getDecodePassword(String id) => send("GET", "json", "password/" + id + "/decoded");
+  Future<HttpRequest> deletePassword(String id) => send("DELETE", "json", "password/" + id);
 }

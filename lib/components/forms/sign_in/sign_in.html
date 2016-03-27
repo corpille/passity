@@ -3,7 +3,7 @@
   <form (ngSubmit)="onSubmit()" #signInForm="ngForm">
     <div class="form-group">
       <label for="login">Login</label>
-      <div [hidden]="login.valid || login.pristine || user.login.length == 0" class="alert alert-danger">
+      <div [hidden]="login.valid || login.pristine" class="alert alert-danger">
         Login is required
       </div>
       <input type="text" class="form-control" required
@@ -12,7 +12,7 @@
     </div>
     <div class="form-group">
       <label for="password">Password</label>
-      <div [hidden]="password.valid || password.pristine || user.password.lenght == 0" class="alert alert-danger">
+      <div [hidden]="password.valid || password.pristine" class="alert alert-danger">
         Password is required
       </div>
       <input type="password" class="form-control" required
