@@ -1,16 +1,16 @@
 part of components;
 
-@Component(selector: 'add-password', templateUrl: 'add-password/add-password.component.html')
-class AddPassword implements OnInit {
+@Component(selector: 'add-user', templateUrl: 'add-user/add-user.component.html')
+class AddUser implements OnInit {
   Session session;
-  Map password = new Map();
+  User user = new User();
   var error = false;
   var success = false;
   final Router _router;
   final SessionManager _sessionManager;
-  final SrvPassword _srvPassword;
+  final SrvUser _srvUser;
 
-  AddPassword(this._router, this._sessionManager, this._srvPassword);
+  AddUser(this._router, this._sessionManager, this._srvUser);
 
   @override
   ngOnInit() {
@@ -20,12 +20,12 @@ class AddPassword implements OnInit {
     }
   }
 
-  onSubmit(NgForm addPasswordForm) async {
+  onSubmit(NgForm addUserForm) async {
     try {
-      await _srvPassword.addPassword(password);
+      await _srvUser.createUser(user);
       success = true;
       error = false;
-      addPasswordForm.controls.forEach((name, control) {
+      addUserForm.controls.forEach((name, control) {
         control.updateValue('');
         control.setErrors(null);
       });

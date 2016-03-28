@@ -109,8 +109,10 @@ abstract class PgModel {
       String varName = MirrorSystem.getName(variables[i].simpleName);
       var isManyToOne = hasAnnotation(variables[i], ManyToOne);
       var isManyToMany = hasAnnotation(variables[i], ManyToMany);
-      if (isManyToMany != null && (isManyToMany as ManyToMany).main == true) {
-        subquery = await _handleSaveManyToMany(im, variables[i]);
+      if (isManyToMany != null) {
+        if ((isManyToMany as ManyToMany).main == true) {
+          subquery = await _handleSaveManyToMany(im, variables[i]);
+        }
       } else {
         var name = "";
         var content = "";

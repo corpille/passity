@@ -103,12 +103,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.12.2"
-  dart_jwt:
-    description:
-      name: dart_jwt
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.4.5"
   dart_style:
     description:
       name: dart_style
@@ -187,6 +181,12 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.12.7"
+  jwt:
+    description:
+      name: jwt
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.4"
   less_dart:
     description:
       name: less_dart

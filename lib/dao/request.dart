@@ -34,6 +34,7 @@ class Request {
   Future<HttpRequest> isAuth() => send("GET", "text", "isAuth");
   Future<HttpRequest> signIn(String user) => send("POST", "json", "user/sign-in", data: user);
   Future<HttpRequest> getUser(String id) => send("GET", "json", "user/" + id);
+  Future<HttpRequest> createUser(String user) => send("PUT", "json", "user/", data: user);
 
   /// Passwords
   Future<HttpRequest> addPassword(String password) => send("PUT", "json", "password/", data: password);

@@ -5,9 +5,8 @@ import 'package:redstone_mapper/mapper.dart';
 
 void main() {
   var pathCurrentFile = Platform.script.toFilePath();
-  var modelsDir = new Directory(pathCurrentFile.substring(
-          0, pathCurrentFile.lastIndexOf(Platform.pathSeparator)) +
-      '/models');
+  var modelsDir =
+      new Directory(pathCurrentFile.substring(0, pathCurrentFile.lastIndexOf(Platform.pathSeparator)) + '/models');
   bool exist = modelsDir.existsSync();
   if (exist == false) {
     print("Error : lib/models non found");
@@ -34,17 +33,15 @@ void main() {
       var className = content.substring(index1, index2);
 
       MirrorSystem mirrors = currentMirrorSystem();
-      LibraryMirror lm = mirrors.libraries.values.firstWhere(
-          (LibraryMirror lm) => lm.qualifiedName == new Symbol("models"));
+      LibraryMirror lm =
+          mirrors.libraries.values.firstWhere((LibraryMirror lm) => lm.qualifiedName == new Symbol("models"));
       ClassMirror cm = lm.declarations[new Symbol(className)];
-      if (cm == null ||
-          !(cm.isSubclassOf(lm.declarations[new Symbol("Model")]))) {
+      if (cm == null || !(cm.isSubclassOf(lm.declarations[new Symbol("Model")]))) {
         return;
       }
       InstanceMirror im = cm.newInstance(new Symbol(''), []);
       var decls = cm.declarations.values.where((dm) {
-        if ((dm is VariableMirror || (dm is MethodMirror && dm.isGetter)) ==
-            false) {
+        if ((dm is VariableMirror || (dm is MethodMirror && dm.isGetter)) == false) {
           return false;
         }
         bool ok = false;
@@ -79,8 +76,7 @@ void main() {
         if (val is List<Model>) {
           var meta = null;
           if (meta != null) {
-            codeGenerate +=
-                "    if (data.containsKey('${key}') && data['${key}'] is List) {\n";
+            codeGenerate += "    if (data.containsKey('${key}') && data['${key}'] is List) {\n";
             codeGenerate +=
                 "      data['${key}'].forEach((var data) => ${key}.add(${dm.metadata[1].reflectee}(data)));\n";
             codeGenerate += "    }\n";
@@ -90,8 +86,7 @@ void main() {
         codeGenerate +=
             "    if (data.containsKey('${key}') && data['${key}'].toString() != ${key}.toString()) ${key} = ";
         if (val is Model) {
-          codeGenerate +=
-              "new ${MirrorSystem.getName(reflect(val).type.simpleName)}(data['${key}']);";
+          codeGenerate += "new ${MirrorSystem.getName(reflect(val).type.simpleName)}(data['${key}']);";
         } else {
           codeGenerate += "data['${key}'];";
         }
@@ -120,9 +115,7 @@ void main() {
         var index1 = content.indexOf(labelStart);
         var index2 = content.indexOf(labelEnd) + labelEnd.length;
         var contentTmp = content;
-        content = contentTmp.substring(0, index1) +
-            codeGenerate +
-            contentTmp.substring(index2);
+        content = contentTmp.substring(0, index1) + codeGenerate + contentTmp.substring(index2);
       } else {
         content = content.replaceFirst(r"{", "{\n\n" + codeGenerate);
       }

@@ -4,7 +4,8 @@ part of components;
 @RouteConfig(const [
   const Route(path: '/', name: "Dashboard", component: Dashboard),
   const Route(path: '/sign-in', name: "SignIn", component: SignIn),
-  const Route(path: '/add-password', name: "AddPassword", component: AddPassword)
+  const Route(path: '/add-password', name: "AddPassword", component: AddPassword),
+  const Route(path: '/user/add', name: "AddUser", component: AddUser)
 ])
 class AppComponent {
   SessionManager _sessionManager;

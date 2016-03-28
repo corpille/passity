@@ -5,4 +5,5 @@ import "package:passity/dao.dart";
 import "package:passity/models/models.dart";
 import 'dart:async';
 
-part "services/password.service.dart";
+part "password.service.dart";
+part "user.service.dart";

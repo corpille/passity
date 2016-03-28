@@ -7,10 +7,10 @@ class UserController {
   @app.Route("/", methods: const [app.PUT])
   Future addUser(@Decode() User data) async {
     User user = await new User().findByEmail(data.login);
-    if (user != null) {
+    if (user == null) {
       data.key = Encryption.generateKey(data.password);
       data.password = Encryption.SHA256(data.password);
-      await user.save();
+      await data.save();
       return data.escape();
     }
     return ErrorResponse.userLoginAlreadyUsed();
@@ -23,11 +23,12 @@ class UserController {
     if (user != null) {
       if (user.password == Encryption.SHA256(data.password)) {
         try {
+          user.password = data.password;
           var token = new Session(app.request).connect(user);
           user.session_token = token;
-          var data = user.escape().toJson();
-          data["session_token"] = token;
-          return JSON.encode(data);
+          var result = user.escape().toJson();
+          result["session_token"] = token;
+          return JSON.encode(result);
         } catch (e) {
           throw ErrorResponse.loginError();
         }

@@ -91,6 +91,7 @@ class Dao {
   /// Users
   Future<Model> signIn(Map login) => _toModel(_req.signIn(JSON.encode(login)), new User());
   Future<Model> getUser(String id) => _toModel(_req.getUser(id), new User());
+  Future<Model> createUser(User user) => _toModel(_req.createUser(user.toString()), new User());
   Future<bool> logout() async => true;
 
   /// Passwords

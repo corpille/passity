@@ -64,7 +64,6 @@ class PasswordController {
   }
 
   /// Create a new password
-  @Secure(const [UserType.ADMIN, UserType.EDIT])
   @app.Route("/", methods: const [app.PUT])
   Future putPassword(@CurrentUser() futureUser, @CurrentToken() String token, @app.Body(app.JSON) Map data) async {
     if (data == null || !(data is Map) || !data.containsKey("name") || !data.containsKey("pass")) {

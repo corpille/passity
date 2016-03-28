@@ -13,6 +13,9 @@
         <li *ngIf="session.isAuth">
           <a  [routerLink]="['AddPassword']">Create a password</a>
         </li>
+        <li *ngIf="session.isAuth">
+          <a  [routerLink]="['AddUser']">Create a user</a>
+        </li>
       </ul>
     </div>
     <div class="navbar" class="ok pull-right">

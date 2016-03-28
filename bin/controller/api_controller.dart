@@ -12,7 +12,7 @@ class APIController {
     try {
       User user = await futureUser;
       if (user == null) {
-        throw user;
+        throw ErrorResponse.notConnected();
       }
       return {"isAuth": true, "user": user.escape()};
     } catch (e) {

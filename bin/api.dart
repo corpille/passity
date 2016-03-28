@@ -9,7 +9,7 @@ import 'dart:mirrors';
 /// Pub libraries
 import 'package:args/args.dart';
 import 'package:yaml/yaml.dart';
-import 'package:dart_jwt/dart_jwt.dart';
+import 'package:jwt/json_web_token.dart';
 import "package:cipher/impl/server.dart";
 import 'package:redstone/redstone.dart' as app;
 import 'package:redstone_mapper/plugin.dart';

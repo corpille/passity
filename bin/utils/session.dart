@@ -9,7 +9,7 @@ class Session {
   static const String SESSION_HEADER = "authorization";
 
   static const _sharedSecret = "mybeautifulsecret";
-  final _signatureContext = new JwaSymmetricKeySignatureContext(_sharedSecret);
+  final jwt = new JsonWebTokenCodec(secret: _sharedSecret);
 
   app.Request _req = null;
 
@@ -29,23 +29,15 @@ class Session {
   /// Generate a jwt token for the current session
   ///
   String connect(User user) {
-    var claimSet = new MapJwtClaimSet({
-      "uid": user.id,
-      "role": user.role,
-      "token": Encryption.SHA256(Encryption.SHA512(user.password))
-    });
-    final jwt = new JsonWebToken.jws(claimSet, _signatureContext);
-    return jwt.encode();
+    var payload = {"uid": user.id, "role": user.role, "token": Encryption.SHA256(Encryption.SHA512(user.password))};
+    return jwt.encode(payload);
   }
 
   Map get _currentSession {
     if (_req.headers[SESSION_HEADER] == null) {
       return null;
     }
-    return new JsonWebToken.decode(_req.headers[SESSION_HEADER],
-            claimSetParser: mapClaimSetParser)
-        .claimSet
-        .toMap();
+    return jwt.decode(_req.headers[SESSION_HEADER]);
   }
 
   String getUID() {
@@ -66,8 +58,9 @@ class Session {
     if (_currentSession == null) {
       return false;
     }
+    var current_session = _currentSession;
     for (UserType role in roles) {
-      if (_currentSession["role"] == role.index) {
+      if (current_session["role"] == role.index) {
         return true;
       }
     }
