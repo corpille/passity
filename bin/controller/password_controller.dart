@@ -34,7 +34,7 @@ class PasswordController {
     if (user == null) {
       throw ErrorResponse.userNotFound();
     }
-    return user.passwords;
+    return user.getPassword();
   }
 
   @app.Route("/:id/decoded", methods: const [app.GET])
@@ -52,7 +52,7 @@ class PasswordController {
     if (password == null) {
       throw ErrorResponse.passwordNotFound();
     }
-    if (password.users.where((u) => u.id == user.id).length != 1) {
+    if (password.passwordrole.where((PasswordRole pr) => pr.user.id == user.id).length != 1) {
       throw ErrorResponse.notYours();
     }
     for (Hash hash in password.hashes) {
@@ -73,8 +73,17 @@ class PasswordController {
     password.name = data["name"];
     try {
       User user = await futureUser;
-      password.users.add(user);
       password = await password.save();
+      PasswordRole pr = new PasswordRole();
+      pr.password = password;
+      pr.user = user;
+      pr.role = UserType.ADMIN.index;
+      try {
+        await pr.save();
+      } catch (e) {
+        print(e);
+      }
+
       Hash hash = new Hash.fromPassword(user.key, data["pass"], token);
       hash.password = password;
       await hash.save();

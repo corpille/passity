@@ -31,15 +31,12 @@ class TableCreator {
     }
   }
 
-  static Future createAdminUser(
-      PostgreSql postgreSql, String login, String password) async {
+  static Future createAdminUser(PostgreSql postgreSql, String login, String password) async {
     User user = new User();
     user.login = login;
     user.key = Encryption.generateKey(password);
     user.password = Encryption.SHA256(password);
-    user.role = UserType.ADMIN.index;
-    List<User> users = await postgreSql.query(
-        "SELECT * from users WHERE login = '${user.login}'", User);
+    List<User> users = await postgreSql.query("SELECT * from users WHERE login = '${user.login}'", User);
     if (users != null && users.length == 0) {
       await user.save();
     }

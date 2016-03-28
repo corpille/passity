@@ -29,7 +29,7 @@ class Session {
   /// Generate a jwt token for the current session
   ///
   String connect(User user) {
-    var payload = {"uid": user.id, "role": user.role, "token": Encryption.SHA256(Encryption.SHA512(user.password))};
+    var payload = {"uid": user.id, "token": Encryption.SHA256(Encryption.SHA512(user.password))};
     return jwt.encode(payload);
   }
 

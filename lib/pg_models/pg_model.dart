@@ -4,6 +4,8 @@ abstract class PgModel {
   @Field()
   String id;
 
+  List _overflowType = new List();
+
   Future createTable(postgreSql) async {
     InstanceMirror im = reflect(this);
     String tableName = getTableName(im.type);
@@ -27,7 +29,7 @@ abstract class PgModel {
           if (varName == "id") {
             query += "id uuid primary key";
           } else if (isManyToOne != null) {
-            var typeName = MirrorSystem.getName(variables[i].type.simpleName);
+            var typeName = getTableName(variables[i].type);
             typeName = typeName.toLowerCase() + "_id";
             query += typeName + " text";
           } else {
@@ -117,7 +119,7 @@ abstract class PgModel {
         var name = "";
         var content = "";
         if (isManyToOne != null) {
-          var typeName = MirrorSystem.getName(variables[i].type.simpleName);
+          var typeName = getTableName(variables[i].type);
           name = typeName.toLowerCase() + "_id";
         } else {
           name += varName;
@@ -210,27 +212,37 @@ abstract class PgModel {
     return "";
   }
 
-  Future findById(String id) async {
+  Future findById(String modelId) async {
     InstanceMirror im = reflect(this);
     String tableName = getTableName(im.type);
     if (tableName == null) {
       throw "Class has no table annotation";
     }
-    Map data = new Map();
-    data.addAll(await _getOneToManyRelations(im, id));
-    data.addAll(await _getManyToManyRelations(im, id));
 
-    String query = "SELECT * from " + tableName + " WHERE id = '${id}'";
+    String query = "SELECT * from " + tableName + " WHERE id = '${modelId}'";
     List<PgModel> models = await new ORM().query(query, im.reflectee.runtimeType);
     if (models.length > 0) {
       var model = models.first;
+      model = findRelations(im, model);
+      _overflowType = new List();
+      return model;
+    }
+    return null;
+  }
+
+  Future findRelations(InstanceMirror im, PgModel model) async {
+    if (!_overflowType.contains(model.id)) {
+      Map data = new Map();
+      _overflowType.add(model.id);
+      data.addAll(await _getManyToOneRelations(im, model.id));
+      data.addAll(await _getOneToManyRelations(im, model.id));
+      data.addAll(await _getManyToManyRelations(im, model.id));
       InstanceMirror i = reflect(model);
       data.forEach((key, value) {
         i.setField(key, value);
       });
-      return model;
     }
-    return null;
+    return model;
   }
 
   Future _getManyToManyRelations(InstanceMirror im, String id) async {
@@ -246,7 +258,10 @@ abstract class PgModel {
       query += "JOIN ${joinTable} j ON j.${secondTable}_id = m.id ";
       query += "WHERE j.${firstTable}_id = '${id}'";
       List<PgModel> models = await new ORM().query(query, relationType.originalDeclaration.reflectedType);
-      data[relation.simpleName] = models;
+      data[relation.simpleName] = new List();
+      for (PgModel model in models) {
+        data[relation.simpleName].add(await findRelations(reflect(model), model));
+      }
     }
     return data;
   }
@@ -261,7 +276,29 @@ abstract class PgModel {
       String query = "select m.* FROM ${secondTable} m ";
       query += "WHERE m.${firstTable}_id = '${id}'";
       List<PgModel> models = await new ORM().query(query, relationType.originalDeclaration.reflectedType);
-      data[relation.simpleName] = models;
+      data[relation.simpleName] = new List();
+      for (PgModel model in models) {
+        data[relation.simpleName].add(await findRelations(reflect(model), model));
+      }
+    }
+    return data;
+  }
+
+  Future _getManyToOneRelations(InstanceMirror im, String id) async {
+    List<VariableMirror> manyToOne = _getVarWithAnnotation(im, ManyToOne);
+    Map data = new Map();
+    for (VariableMirror relation in manyToOne) {
+      String firstTable = getTableName(relation.owner).toLowerCase();
+      String secondTable = getTableName(relation.type).toLowerCase();
+      String query = "select m.* FROM ${secondTable} m ";
+      query += "JOIN ${firstTable} j ON j.${secondTable}_id = CAST(m.id as varchar(50)) ";
+      query += "WHERE j.id = '${id}'";
+      List<PgModel> models = await new ORM().query(query, relation.type.reflectedType);
+      if (models.length > 0) {
+        PgModel model = models.first;
+        PgModel realModel = await findRelations(reflect(model), model);
+        data[relation.simpleName] = realModel;
+      }
     }
     return data;
   }

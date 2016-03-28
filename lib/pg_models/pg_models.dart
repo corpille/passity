@@ -16,3 +16,4 @@ part "pg_model.dart";
 part "user.dart";
 part "hash.dart";
 part "password.dart";
+part "password_role.dart";

@@ -1,7 +1,5 @@
 part of pg_models;
 
-enum UserType { ADMIN, EDIT, READ }
-
 @Table("users")
 class User extends PgModel {
   @Field(view: "login")
@@ -13,16 +11,13 @@ class User extends PgModel {
   @Field(view: "key")
   String key;
 
-  @Field(view: "role")
-  int role = UserType.READ.index;
-
-  @ManyToMany(main: false)
-  List<Password> passwords;
+  @OneToMany()
+  List<PasswordRole> passwordroles;
 
   String session_token;
 
   User() {
-    passwords = new List();
+    passwordroles = new List();
   }
 
   User escape() {
@@ -38,5 +33,13 @@ class User extends PgModel {
       return models.first;
     }
     return null;
+  }
+
+  List<Password> getPassword() {
+    List<Password> passwords = new List();
+    passwordroles.forEach((PasswordRole passwordrole) {
+      passwords.add(passwordrole.password);
+    });
+    return passwords;
   }
 }
