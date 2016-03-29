@@ -13,15 +13,12 @@ class PasswordController {
     return password;
   }
 
-  /// Get a password
+  /// Delete a password
   @app.Route("/:id", methods: const [app.DELETE])
   Future deletePassword(String id) async {
     Password password = await new Password().findById(id);
     if (password == null) {
       return ErrorResponse.userNotFound();
-    }
-    for (Hash hash in password.hashes) {
-      await hash.delete();
     }
     await password.delete();
     return {"success": true};
@@ -52,7 +49,7 @@ class PasswordController {
     if (password == null) {
       throw ErrorResponse.passwordNotFound();
     }
-    if (password.passwordrole.where((PasswordRole pr) => pr.user.id == user.id).length != 1) {
+    if (password.passwordroles.where((PasswordRole pr) => pr.user.id == user.id).length != 1) {
       throw ErrorResponse.notYours();
     }
     for (Hash hash in password.hashes) {
@@ -60,6 +57,11 @@ class PasswordController {
         return {"decoded": hash.getPassword(user.key, token)};
       }
     }
+    throw ErrorResponse.internalError();
+  }
+
+  @app.Route("/:id/share", methods: const [app.POST])
+  Future sharePassword(@app.Body(app.JSON) Map data) {
     throw ErrorResponse.internalError();
   }
 

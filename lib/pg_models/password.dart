@@ -6,13 +6,24 @@ class Password extends PgModel {
   String name;
 
   @OneToMany()
-  List<PasswordRole> passwordrole;
+  List<PasswordRole> passwordroles;
 
   @OneToMany()
   List<Hash> hashes;
 
   Password() {
-    passwordrole = new List();
+    passwordroles = new List();
     hashes = new List();
+  }
+
+  @override
+  Future delete() async {
+    for (Hash hash in hashes) {
+      await hash.delete();
+    }
+    for (PasswordRole passwordrole in passwordroles) {
+      await passwordrole.delete();
+    }
+    await super.delete();
   }
 }
