@@ -5,7 +5,7 @@ author: Corentin Pillet <corentin@liner.io>
 environment:
   sdk: '>=1.13.0 <2.0.0'
 dependencies:
-  args: 0.12.2+6
+  args: 0.13.1
   redstone:
     git: https://github.com/redstone-dart/redstone.git
   redstone_mapper:
@@ -21,12 +21,18 @@ dependencies:
   browser: ^0.10.0
   less_dart: any
   dart_to_js_script_rewriter: ^0.1.0
+  reflectable: any
+dev_dependencies:
+  test: 0.12.13
 transformers:
 - angular2:
     platform_directives:
       - 'package:angular2/common.dart#CORE_DIRECTIVES'
       - 'package:angular2/common.dart#FORM_DIRECTIVES'
     entry_points: web/main.dart
+- reflectable:
+    entry_points:
+        - web/main.dart
 - dart_to_js_script_rewriter
 - less_dart:
     entry_point: web/style/style.less
