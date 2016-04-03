@@ -1,5 +1,5 @@
 postgres:
-  url: "localhost"
+  url: "postgres"
   port: "5432"
   dbName: "passity"
   login: "passity"
