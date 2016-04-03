@@ -5,6 +5,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import "package:passity/models/models.dart";
+import 'package:liner_serializer/liner_serializer.dart';
 
 part "dao/dao.dart";
 part "dao/request.dart";

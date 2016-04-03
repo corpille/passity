@@ -51,12 +51,8 @@ class Dao {
     }
   }
 
-  Future<Model> _toModel(Future<HttpRequest> futureRequest, Model model) {
-    return _converter(futureRequest, (Map data) {
-      model.checkData(data);
-      return model;
-    });
-  }
+  Future<Model> _toModel(Future<HttpRequest> futureRequest, Type type)
+    => _converter(futureRequest, (Map data) => new Serializer().deserialize(data, type));
 
   bool _checkBoolean(Map map, String key) {
     if (map.containsKey(key) && (map[key] is bool)) {
@@ -65,13 +61,11 @@ class Dao {
     return false;
   }
 
-  Future<List<Model>> _toModelList(Future<HttpRequest> futureRequest, Model modelTemplate) =>
+  Future<List<Model>> _toModelList(Future<HttpRequest> futureRequest, Type type) =>
       _converter(futureRequest, (Map data) {
         List<Model> resultList = new List();
         for (var elem in data) {
-          Model model = modelTemplate.newThis();
-          model.checkData(elem);
-          resultList.add(model);
+          resultList.add(new Serializer().deserialize(elem, type));
         }
         return resultList;
       });
@@ -83,20 +77,22 @@ class Dao {
             data.containsKey("user") &&
             data["user"] is Map &&
             data["user"] != null) {
-          return new User()..checkData(data["user"]);
+            return new Serializer().deserialize(data["user"], User);
         }
         return false;
       });
 
   /// Users
-  Future<Model> signIn(Map login) => _toModel(_req.signIn(JSON.encode(login)), new User());
-  Future<Model> getUser(String id) => _toModel(_req.getUser(id), new User());
-  Future<Model> createUser(User user) => _toModel(_req.createUser(user.toString()), new User());
+  Future<Model> signIn(Map login) => _toModel(_req.signIn(JSON.encode(login)), User);
+  Future<Model> getUser(String id) => _toModel(_req.getUser(id), User);
+  Future<Model> createUser(User user) {
+      return _toModel(_req.createUser(new Serializer().serialize(user)), User);
+  }
   Future<bool> logout() async => true;
 
   /// Passwords
-  Future addPassword(Map password) => _toModel(_req.addPassword(JSON.encode(password)), new Password());
-  Future getPasswordByUser(String userId) => _toModelList(_req.getPasswordByUser(userId), new Password());
+  Future addPassword(Map password) => _toModel(_req.addPassword(JSON.encode(password)), Password);
+  Future getPasswordByUser(String userId) => _toModelList(_req.getPasswordByUser(userId), Password);
   Future getDecodePassword(String id) => _converter(_req.getDecodePassword(id), (data) => data);
   Future deletePassword(String id) => _converter(_req.deletePassword(id), (Map data) => _checkBoolean(data, "success"));
 }

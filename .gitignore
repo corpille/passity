@@ -8,3 +8,4 @@ bin/logs/
 logs
 .atom
 web/style/*.css
+pubspec.lock
