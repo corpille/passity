@@ -21,7 +21,9 @@ dependencies:
   browser: ^0.10.0
   less_dart: any
   dart_to_js_script_rewriter: ^0.1.0
-  reflectable: any
+  liner_serializer: any
+dependency_overrides:
+  reflectable: ^0.5.0
 dev_dependencies:
   test: 0.12.13
 transformers:

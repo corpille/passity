@@ -1,8 +1,7 @@
 library models;
 
-import 'package:reflectable/reflectable.dart';
+import 'package:liner_serializer/liner_serializer.dart';
 
-part 'serialize.dart';
 part "user.dart";
 part "model.dart";
 part "password.dart";
