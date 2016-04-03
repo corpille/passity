@@ -9,5 +9,7 @@ ADD lib /app/lib
 RUN pub get
 RUN pub upgrade
 
+EXPOSE 8001
+
 CMD []
 ENTRYPOINT ["dart", "bin/api.dart"]
